@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Press_Start_2P } from "next/font/google";
+import { AuthProvider } from "@/lib/auth-context";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -34,7 +36,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${pressStart.variable} dark`}>
       <body className="min-h-screen flex flex-col bg-[#13131f] text-[#f5f1e8] font-sans antialiased">
-        {children}
+        <AuthProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );
