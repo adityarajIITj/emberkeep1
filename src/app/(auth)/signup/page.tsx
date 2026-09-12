@@ -69,10 +69,9 @@ export default function SignupPage() {
       }
 
       if (data.session) {
-        router.push("/onboarding");
-        router.refresh();
+        window.location.href = "/onboarding";
       } else {
-        router.push("/login?notice=account-created");
+        window.location.href = "/login?notice=account-created";
       }
     } catch (err) {
       console.error("Signup error:", err);

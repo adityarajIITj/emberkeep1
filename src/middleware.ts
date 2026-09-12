@@ -7,11 +7,11 @@ export async function middleware(request: NextRequest) {
   });
 
   const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    "https://placeholder-project.supabase.co";
+    (typeof process !== "undefined" && process.env.NEXT_PUBLIC_SUPABASE_URL) ||
+    "https://prpvxnozlooykklpetne.supabase.co";
   const supabaseAnonKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    "placeholder-anon-key";
+    (typeof process !== "undefined" && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) ||
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBycHZ4bm96bG9veWtrbHBldG5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxOTI3MzQsImV4cCI6MjEwNDc2ODczNH0.8i2aNeUVEE3XCuGht38-Nl5lhv8eeUHmNKbONpr4Z2U";
 
   const supabase = createServerClient(
     supabaseUrl,
@@ -36,9 +36,15 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  try {
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
+    user = authUser;
+  } catch (authErr) {
+    console.error("Middleware auth verification error:", authErr);
+  }
 
   const pathname = request.nextUrl.pathname;
 

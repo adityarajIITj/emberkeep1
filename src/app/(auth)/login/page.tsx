@@ -77,8 +77,8 @@ function LoginForm() {
         return;
       }
 
-      router.push(next);
-      router.refresh();
+      // Full document navigation ensures all cookies are committed and passed cleanly to middleware
+      window.location.href = next;
     } catch (err) {
       console.error("Login error:", err);
       setServerError("An unexpected error occurred. Please try again.");
