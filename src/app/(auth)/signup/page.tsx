@@ -61,7 +61,13 @@ export default function SignupPage() {
       });
 
       if (error) {
-        setServerError(error.message);
+        if (error.message?.includes("fetch") || error.message?.includes("Failed to fetch")) {
+          setServerError(
+            "Network error connecting to authentication server. If you have an ad-blocker (uBlock, Brave Shields, AdGuard) enabled, please pause it for this site and retry."
+          );
+        } else {
+          setServerError(error.message);
+        }
         setIsLoading(false);
         return;
       }
