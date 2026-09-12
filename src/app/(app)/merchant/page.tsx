@@ -255,85 +255,90 @@ export default function MerchantPage() {
         </div>
       </div>
 
-      {/* Merchant Altar Showcase Banner with Proximity Motto & Orbiting Circles */}
-      <div
-        ref={merchantBannerRef}
-        className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-[#1e1e2e]/95 via-[#1a1a2b]/95 to-[#13131f]/95 border-2 border-[#ffd166]/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 z-10 group"
-      >
-        <div className="space-y-2 text-center md:text-left max-w-md">
-          <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-[#ffd166]/15 border border-[#ffd166]/40 text-[#ffd166] text-[10px] font-pixel">
-            <Sparkles className="w-3 h-3 text-[#ffd166]" />
-            <span>ENCHANTED WARES OF THE GUILD</span>
-          </div>
-          <div>
-            <div className="text-[10px] font-pixel text-[#9a97ab] uppercase mb-1">
-              Bazaar Creed (Hover Proximity)
+      {/* 2-Column Bazaar Showcase Deck (7 cols + 5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch relative z-10">
+        {/* Left Hero (7 cols): Enchanted Wares Banner & Orbiting Pedestal */}
+        <div
+          ref={merchantBannerRef}
+          className="lg:col-span-7 relative overflow-hidden p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-[#1e1e2e]/95 via-[#1a1a2b]/95 to-[#13131f]/95 border-2 border-[#ffd166]/30 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-6 group"
+        >
+          <div className="space-y-3 text-center sm:text-left flex-1">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#ffd166]/15 border border-[#ffd166]/40 text-[#ffd166] text-[10px] font-pixel">
+              <Sparkles className="w-3 h-3 text-[#ffd166]" />
+              <span>ENCHANTED WARES OF THE GUILD</span>
             </div>
-            <VariableFontCursorProximity
-              className="text-xs sm:text-sm font-pixel text-[#ffd166] tracking-wide"
-              fromFontVariationSettings="'wght' 400, 'slnt' 0"
-              toFontVariationSettings="'wght' 900, 'slnt' -8"
-              radius={150}
-              containerRef={merchantBannerRef}
-            >
-              EXCHANGE SACRED GOLD FOR PRESTIGE & MAJESTY
-            </VariableFontCursorProximity>
+            <div>
+              <div className="text-[10px] font-pixel text-[#9a97ab] uppercase mb-1">
+                Bazaar Creed
+              </div>
+              <VariableFontCursorProximity
+                className="text-xs sm:text-sm font-pixel text-[#ffd166] tracking-wide"
+                fromFontVariationSettings="'wght' 400, 'slnt' 0"
+                toFontVariationSettings="'wght' 900, 'slnt' -8"
+                radius={150}
+                containerRef={merchantBannerRef}
+              >
+                EXCHANGE SACRED GOLD FOR PRESTIGE & MAJESTY
+              </VariableFontCursorProximity>
+            </div>
+            <p className="text-xs text-[#9a97ab] leading-relaxed">
+              Every cosmetic acquired here is permanent to your adventurer account. Equip titles and frames to reflect your guild stature across the realm.
+            </p>
           </div>
-          <p className="text-xs text-[#9a97ab] leading-relaxed mt-1">
-            Every cosmetic acquired here is permanent to your adventurer account. Equip titles and frames to reflect your guild stature.
-          </p>
+
+          {/* Orbiting Treasure Pedestal with Animated Path Text */}
+          <div className="relative flex items-center justify-center size-36 shrink-0">
+            <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center -z-0">
+              <AnimatedPathText
+                path="M 72, 72 m -54, 0 a 54,54 0 1,0 108,0 a 54,54 0 1,0 -108,0"
+                viewBox="0 0 144 144"
+                text="✦ BAZAAR VAULT ✦ SACRED TREASURES ✦"
+                duration={16}
+                textClassName="text-[7.5px] tracking-[0.2em] fill-[#ffd166]/70 font-pixel"
+                svgClassName="w-36 h-36"
+              />
+            </div>
+
+            <OrbitingCircles radius={38} duration={12} reverse speed={1.2} iconSize={20} path={true}>
+              <Crown className="w-3 h-3 text-[#ffd166]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={38} duration={12} delay={6} reverse speed={1.2} iconSize={20} path={false}>
+              <Shield className="w-3 h-3 text-[#8b5cf6]" />
+            </OrbitingCircles>
+
+            <div className="w-12 h-12 rounded-2xl bg-[#13131f] border-2 border-[#ffd166]/50 shadow-[0_0_20px_rgba(255,209,102,0.3)] flex items-center justify-center z-10">
+              <Gem className="w-6 h-6 text-[#ffd166] animate-pulse" />
+            </div>
+          </div>
         </div>
 
-        {/* Orbiting Treasure Pedestal with Animated Path Text */}
-        <div className="relative flex items-center justify-center size-40 shrink-0">
-          <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center -z-0">
-            <AnimatedPathText
-              path="M 80, 80 m -60, 0 a 60,60 0 1,0 120,0 a 60,60 0 1,0 -120,0"
-              viewBox="0 0 160 160"
-              text="✦ BAZAAR VAULT ✦ SACRED TREASURES ✦"
-              duration={16}
-              textClassName="text-[8px] tracking-[0.22em] fill-[#ffd166]/70 font-pixel"
-              svgClassName="w-40 h-40"
-            />
-          </div>
-
-          <OrbitingCircles radius={44} duration={12} reverse speed={1.2} iconSize={24} path={true}>
-            <Crown className="w-3.5 h-3.5 text-[#ffd166]" />
-          </OrbitingCircles>
-          <OrbitingCircles radius={44} duration={12} delay={6} reverse speed={1.2} iconSize={24} path={false}>
-            <Shield className="w-3.5 h-3.5 text-[#8b5cf6]" />
-          </OrbitingCircles>
-
-          <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#ffd166]/50 shadow-[0_0_20px_rgba(255,209,102,0.3)] flex items-center justify-center z-10">
-            <Gem className="w-7 h-7 text-[#ffd166] animate-pulse" />
-          </div>
-        </div>
-      </div>
-
-      {/* 🌟 3D Featured Relics Carousel in Bazaar */}
-      <div className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/40 shadow-xl flex flex-col items-center relative overflow-hidden z-10">
-        <div className="w-full flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#ffd166]" />
-            <span className="font-pixel text-xs text-[#f5f1e8]">
-              VAULT SHOWCASE • RARE RELICS OF THE REALM
+        {/* Right Hero (5 cols): 3D Vault Showcase (BoxCarousel) */}
+        <div className="lg:col-span-5 p-5 sm:p-6 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/40 shadow-xl flex flex-col justify-between relative overflow-hidden">
+          <div className="w-full flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#ffd166]" />
+              <span className="font-pixel text-xs text-[#f5f1e8]">
+                VAULT SHOWCASE
+              </span>
+            </div>
+            <span className="text-[10px] text-[#ffd166] font-pixel">
+              3D CUBE
             </span>
           </div>
-          <span className="text-[10px] text-[#ffd166] font-pixel">
-            3D INTERACTIVE CUBE
-          </span>
-        </div>
-        <p className="text-xs text-[#9a97ab] self-start mb-4">
-          Preview legendary equipment and cosmetic wonders crafted by the ancient guild artisans.
-        </p>
+          <p className="text-xs text-[#9a97ab] mb-2 leading-relaxed">
+            Preview legendary equipment and cosmetic wonders crafted by the ancient guild artisans.
+          </p>
 
-        <BoxCarousel
-          items={featuredRelics}
-          width={280}
-          height={175}
-          perspective={900}
-          autoRotateInterval={4000}
-        />
+          <div className="flex-1 flex items-center justify-center py-1">
+            <BoxCarousel
+              items={featuredRelics}
+              width={260}
+              height={165}
+              perspective={850}
+              autoRotateInterval={4000}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Filter Tabs */}
@@ -369,8 +374,8 @@ export default function MerchantPage() {
 
       {/* Catalog Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 relative z-10">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
             <div
               key={n}
               className="notch-card p-5 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-56 animate-pulse"
@@ -378,7 +383,7 @@ export default function MerchantPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 relative z-10">
           {filteredCatalog.map((item) => {
             const canAfford = (character?.gold || 0) >= item.price_gold;
             const isEquipped = item.isEquipped;

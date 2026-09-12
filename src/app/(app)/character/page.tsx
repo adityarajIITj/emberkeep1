@@ -93,7 +93,7 @@ export default function CharacterPage() {
           className="p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#8b5cf6]/30 backdrop-blur-md"
         >
           <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
-            MINDSET & ASCENSION (HOVER PROXIMITY)
+            MINDSET & ASCENSION
           </div>
           <VariableFontCursorProximity
             className="text-xs font-pixel text-[#f5f1e8] tracking-wide"

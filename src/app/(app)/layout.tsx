@@ -51,7 +51,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className={`min-h-screen flex flex-col bg-[#0d0d17] text-[#f5f1e8] relative selection:bg-[#ff8c42]/30 selection:text-[#ffd166] pb-24 ${themeClass}`}
+      className={`min-h-screen flex flex-col bg-[#0d0d17] text-[#f5f1e8] relative selection:bg-[#ff8c42]/30 selection:text-[#ffd166] pb-36 lg:pb-44 ${themeClass}`}
     >
       {/* 1. Dynamic Novatrix Silk Shader Background */}
       <div className="fixed inset-0 pointer-events-none -z-30 overflow-hidden opacity-25">
@@ -77,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <AppHeader />
 
       {/* Main Content Area with Fluid Page Transition */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 relative z-10">
+      <main className="flex-1 max-w-[1580px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         <PageTransition>{children}</PageTransition>
       </main>
 

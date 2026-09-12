@@ -265,7 +265,7 @@ export default function QuestsPage() {
           className="hidden lg:flex flex-col p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#ff8c42]/30 backdrop-blur-md"
         >
           <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
-            DAILY BOUNTY MOTTO (CURSOR PROXIMITY)
+            Daily Bounty Motto
           </div>
           <VariableFontCursorProximity
             className="text-xs font-pixel text-[#f5f1e8] tracking-wide"
@@ -300,222 +300,277 @@ export default function QuestsPage() {
         </div>
       </div>
 
-      {/* Discipline Filters Navigation */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none relative z-10">
-        {disciplines.map((d) => {
-          const isActive = selectedDiscipline === d.key;
-          return (
-            <button
-              key={d.key}
-              onClick={() => setSelectedDiscipline(d.key)}
-              aria-pressed={isActive}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                isActive
-                  ? "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] font-bold shadow-md shadow-[#ff8c42]/20"
-                  : "bg-[#1e1e2e]/90 backdrop-blur-md border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ff8c42]/50"
-              }`}
-            >
-              {d.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Secondary Difficulty Filter Chips */}
-      <div className="flex items-center gap-2 flex-wrap text-xs text-[#9a97ab] relative z-10">
-        <span className="flex items-center gap-1 text-[11px] font-semibold text-[#f5f1e8]">
-          <Filter className="w-3 h-3 text-[#ffd166]" /> Tier:
-        </span>
-        {["ALL", "EASY", "MEDIUM", "HARD", "EPIC"].map((diff) => (
-          <button
-            key={diff}
-            onClick={() => setSelectedDifficulty(diff)}
-            className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-              selectedDifficulty === diff
-                ? "bg-[#ffd166]/15 text-[#ffd166] border border-[#ffd166]/50 shadow-sm"
-                : "bg-[#1e1e2e]/60 border border-transparent hover:text-[#f5f1e8] hover:border-[#2e2e45]"
-            }`}
-          >
-            {diff}
-          </button>
-        ))}
-      </div>
-
-      {/* Error state */}
-      {isError && (
-        <div
-          role="alert"
-          className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center justify-between text-xs text-[#f87171] relative z-10"
-        >
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 shrink-0" />
-            <span>Failed to load quests from server.</span>
-          </div>
-          <button
-            onClick={() => refetch()}
-            className="flex items-center gap-1 px-3 py-1 rounded bg-[#1e1e2e] border border-[#f87171]/40 hover:bg-[#13131f] transition-colors cursor-pointer"
-          >
-            <RefreshCw className="w-3 h-3" />
-            <span>Retry</span>
-          </button>
-        </div>
-      )}
-
-      {/* Loading Skeletons */}
-      {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
-          {[1, 2, 3, 4, 5, 6].map((n) => (
-            <div
-              key={n}
-              className="notch-card p-5 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-44 animate-pulse flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <div className="w-24 h-3 bg-[#2e2e45] rounded" />
-                <div className="w-48 h-4 bg-[#2e2e45] rounded mt-2" />
-                <div className="w-32 h-3 bg-[#2e2e45] rounded mt-1" />
-              </div>
-              <div className="w-full h-4 bg-[#2e2e45] rounded" />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 🔮 Orbiting Ascension Altar (When Quests are Bare) */}
-      {!isLoading && !isError && quests.length === 0 && (
-        <div className="relative overflow-hidden notch-card p-8 sm:p-12 text-center rounded-3xl bg-gradient-to-b from-[#1e1e2e]/90 to-[#13131f]/95 backdrop-blur-2xl border-2 border-[#ff8c42]/40 shadow-2xl space-y-6 max-w-2xl mx-auto my-6 z-10">
-          <BorderBeam size={260} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
-
-          {/* Background Glyph Matrix in Ascension Altar */}
-          <div className="absolute inset-0 pointer-events-none opacity-25">
-            <GlyphMatrix cellSize={14} mutationRate={0.03} interval={100} color="#ff8c42" />
-          </div>
-
-          {/* Interactive Orbiting Circles Portal */}
-          <div className="relative flex h-60 w-full items-center justify-center overflow-hidden">
-            {/* Center Hearth Flame with Circling Animated Path Text */}
-            <div className="relative size-24 flex items-center justify-center z-10">
-              <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center">
-                <AnimatedPathText
-                  path="M 48, 48 m -40, 0 a 40,40 0 1,0 80,0 a 40,40 0 1,0 -80,0"
-                  viewBox="0 0 96 96"
-                  text="✦ SACRED ALTAR ✦ FIVE PILLARS ✦"
-                  duration={14}
-                  textClassName="text-[6.5px] tracking-[0.2em] fill-[#ffd166]/70 font-pixel"
-                  svgClassName="w-24 h-24"
-                />
-              </div>
-              <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_30px_rgba(255,140,66,0.4)] flex items-center justify-center">
-                <Flame className="w-7 h-7 text-[#ff8c42] animate-pulse" />
-              </div>
+      {/* Main 2-Column Command Center (4 cols sidebar + 8 cols quest board) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10">
+        {/* Left Navigator Sidebar (4 cols) */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Discipline Filters Card */}
+          <div className="notch-card p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#2e2e45]">
+              <span className="font-pixel text-xs text-[#f5f1e8]">DISCIPLINES</span>
+              <span className="text-[10px] text-[#ffd166] font-pixel">5 PILLARS</span>
             </div>
 
-            {/* Inner Orbit (Radius 70) */}
-            <OrbitingCircles radius={70} duration={12} reverse speed={1.2} iconSize={32}>
-              <Coins className="w-4 h-4 text-[#ffd166]" />
-            </OrbitingCircles>
-            <OrbitingCircles radius={70} duration={12} delay={6} reverse speed={1.2} iconSize={32}>
-              <Sparkles className="w-4 h-4 text-[#ffd166]" />
-            </OrbitingCircles>
+            <div className="space-y-1.5">
+              {disciplines.map((d) => {
+                const isActive = selectedDiscipline === d.key;
+                const count =
+                  d.key === "ALL"
+                    ? quests.length
+                    : quests.filter((q) => q.category?.attribute?.key === d.key).length;
+                return (
+                  <button
+                    key={d.key}
+                    onClick={() => setSelectedDiscipline(d.key)}
+                    className={`w-full px-3.5 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] font-bold shadow-md shadow-[#ff8c42]/20"
+                        : "bg-[#13131f]/70 border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ff8c42]/40"
+                    }`}
+                  >
+                    <span>{d.label}</span>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono ${
+                        isActive ? "bg-[#13131f]/20 text-[#13131f] font-bold" : "bg-[#1e1e2e] text-[#ffd166]"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
-            {/* Outer Orbit (Radius 120) with the 5 Disciplines */}
-            <OrbitingCircles radius={120} duration={24} delay={0} iconSize={36}>
-              <Sword className="w-4 h-4 text-[#ef4444]" />
-            </OrbitingCircles>
-            <OrbitingCircles radius={120} duration={24} delay={4.8} iconSize={36}>
-              <Scroll className="w-4 h-4 text-[#3b82f6]" />
-            </OrbitingCircles>
-            <OrbitingCircles radius={120} duration={24} delay={9.6} iconSize={36}>
-              <Sparkles className="w-4 h-4 text-[#ec4899]" />
-            </OrbitingCircles>
-            <OrbitingCircles radius={120} duration={24} delay={14.4} iconSize={36}>
-              <Shield className="w-4 h-4 text-[#f59e0b]" />
-            </OrbitingCircles>
-            <OrbitingCircles radius={120} duration={24} delay={19.2} iconSize={36}>
-              <Trophy className="w-4 h-4 text-[#10b981]" />
-            </OrbitingCircles>
+            {/* Tier Filters */}
+            <div className="pt-3 border-t border-[#2e2e45] space-y-2">
+              <span className="text-[11px] font-semibold text-[#f5f1e8] flex items-center gap-1.5">
+                <Filter className="w-3 h-3 text-[#ffd166]" /> Difficulty Tier:
+              </span>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {["ALL", "EASY", "MEDIUM", "HARD", "EPIC"].map((diff) => (
+                  <button
+                    key={diff}
+                    onClick={() => setSelectedDifficulty(diff)}
+                    className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all cursor-pointer ${
+                      selectedDifficulty === diff
+                        ? "bg-[#ffd166]/15 text-[#ffd166] border border-[#ffd166]/50 shadow-sm"
+                        : "bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8]"
+                    }`}
+                  >
+                    {diff}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <MorphingText
-              texts={[
-                "YOUR BOARD IS BARE, ADVENTURER",
-                "SUMMON 5 STARTER BOUNTIES",
-                "THE HEARTH CALLS FOR EMBERS",
-                "ASCEND THE FIVE SACRED DISCIPLINES",
-              ]}
-              className="text-base sm:text-lg text-[#ffd166]"
-            />
-            <p className="text-xs text-[#9a97ab] max-w-md mx-auto leading-relaxed">
-              No active quests found on your roster. Populate your board with 5 starter bounties in one click, or post your own custom quest.
+          {/* Runic Oracle Card (GlyphMatrix) */}
+          <div className="relative overflow-hidden notch-card p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#ff8c42]/30 shadow-xl space-y-3">
+            <div className="absolute inset-0 opacity-20 pointer-events-none -z-0">
+              <GlyphMatrix cellSize={12} mutationRate={0.03} interval={100} color="#ff8c42" />
+            </div>
+
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-center gap-2">
+                <Flame className="w-4 h-4 text-[#ff8c42] animate-pulse" />
+                <span className="font-pixel text-xs text-[#f5f1e8]">RUNIC ORACLE</span>
+              </div>
+              <span className="text-[9px] font-pixel text-[#ffd166]">LIVE STATS</span>
+            </div>
+
+            <p className="text-[11px] text-[#9a97ab] relative z-10 leading-relaxed">
+              Real-time balance of bounties awaiting completion in the guild archives.
             </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <button
-              onClick={handleSummonStarters}
-              disabled={isSummoning || categories.length === 0}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#ffd166] via-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-[0_4px_25px_rgba(255,140,66,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <Zap className="w-4 h-4 text-[#13131f]" />
-              <span>{isSummoning ? "Summoning Bounties..." : "Summon 5 Starter Bounties"}</span>
-            </button>
-
-            <button
-              onClick={handleOpenCreate}
-              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-[#13131f] border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs font-pixel text-[#f5f1e8] hover:text-[#ffd166] transition-all flex items-center justify-center gap-2 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Craft Custom Quest</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 🔮 Runic Roster Oracle Strip with Glyph Matrix */}
-      {!isLoading && quests.length > 0 && (
-        <div className="relative overflow-hidden rounded-2xl bg-[#1e1e2e]/85 border border-[#ff8c42]/30 p-3.5 flex items-center justify-between gap-4 z-10 shadow-lg">
-          <div className="absolute inset-0 opacity-20 pointer-events-none -z-0">
-            <GlyphMatrix cellSize={12} mutationRate={0.03} interval={100} color="#ff8c42" />
-          </div>
-          <div className="flex items-center gap-3 relative z-10">
-            <div className="p-2 rounded-xl bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42]">
-              <Flame className="w-4 h-4 animate-pulse" />
-            </div>
-            <div>
-              <div className="text-[10px] font-pixel text-[#ffd166] uppercase tracking-wider">
-                SACRED GUILD RUNES • ACTIVE BOUNTIES
+            <div className="grid grid-cols-2 gap-2 relative z-10 pt-1">
+              <div className="p-2.5 rounded-xl bg-[#13131f]/90 border border-[#2e2e45]">
+                <div className="text-[9px] font-pixel text-[#9a97ab]">TOTAL XP POOL</div>
+                <div className="font-pixel text-sm text-[#ff8c42] mt-0.5">
+                  +{quests.reduce(
+                    (acc, q) =>
+                      acc +
+                      (q.reward_awarded?.xp ||
+                        (q.difficulty === "EPIC"
+                          ? 100
+                          : q.difficulty === "HARD"
+                          ? 50
+                          : q.difficulty === "MEDIUM"
+                          ? 25
+                          : 10)),
+                    0
+                  )}
+                </div>
               </div>
-              <div className="text-xs text-[#9a97ab]">
-                Showing <span className="text-[#ffd166] font-bold">{quests.length}</span> active quest {quests.length === 1 ? "bounty" : "bounties"} across the realm
+              <div className="p-2.5 rounded-xl bg-[#13131f]/90 border border-[#2e2e45]">
+                <div className="text-[9px] font-pixel text-[#9a97ab]">GOLD BOUNTY</div>
+                <div className="font-pixel text-sm text-[#ffd166] mt-0.5">
+                  +{quests.reduce(
+                    (acc, q) =>
+                      acc +
+                      (q.reward_awarded?.gold ||
+                        (q.difficulty === "EPIC"
+                          ? 40
+                          : q.difficulty === "HARD"
+                          ? 20
+                          : q.difficulty === "MEDIUM"
+                          ? 10
+                          : 4)),
+                    0
+                  )}g
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="hidden sm:flex items-center gap-3 relative z-10 text-xs">
-            <span className="px-2.5 py-1 rounded-lg bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] font-mono text-[11px]">
-              TOTAL XP: <span className="text-[#ff8c42] font-bold">+{quests.reduce((acc, q) => acc + (q.reward_awarded?.xp || (q.difficulty === "EPIC" ? 100 : q.difficulty === "HARD" ? 50 : q.difficulty === "MEDIUM" ? 25 : 10)), 0)}</span>
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] font-mono text-[11px]">
-              GOLD: <span className="text-[#ffd166] font-bold">+{quests.reduce((acc, q) => acc + (q.reward_awarded?.gold || (q.difficulty === "EPIC" ? 40 : q.difficulty === "HARD" ? 20 : q.difficulty === "MEDIUM" ? 10 : 4)), 0)}g</span>
-            </span>
-          </div>
         </div>
-      )}
 
-      {/* Quest Grid */}
-      {!isLoading && quests.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
-          {quests.map((quest) => (
-            <QuestCard
-              key={quest.id}
-              quest={quest}
-              onEdit={handleOpenEdit}
-              onDelete={(id) => deleteMutation.mutate(id)}
-              isDeleting={deleteMutation.isPending}
-            />
-          ))}
+        {/* Right Area: Quest Roster & Altar (8 cols) */}
+        <div className="lg:col-span-8 space-y-5">
+          {/* Error state */}
+          {isError && (
+            <div
+              role="alert"
+              className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center justify-between text-xs text-[#f87171]"
+            >
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>Failed to load quests from server.</span>
+              </div>
+              <button
+                onClick={() => refetch()}
+                className="flex items-center gap-1 px-3 py-1 rounded bg-[#1e1e2e] border border-[#f87171]/40 hover:bg-[#13131f] transition-colors cursor-pointer"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>Retry</span>
+              </button>
+            </div>
+          )}
+
+          {/* Loading Skeletons */}
+          {isLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((n) => (
+                <div
+                  key={n}
+                  className="notch-card p-5 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-44 animate-pulse flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="w-24 h-3 bg-[#2e2e45] rounded" />
+                    <div className="w-48 h-4 bg-[#2e2e45] rounded mt-2" />
+                    <div className="w-32 h-3 bg-[#2e2e45] rounded mt-1" />
+                  </div>
+                  <div className="w-full h-4 bg-[#2e2e45] rounded" />
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 🔮 Orbiting Ascension Altar (When Quests are Bare) */}
+          {!isLoading && !isError && quests.length === 0 && (
+            <div className="relative overflow-hidden notch-card p-8 sm:p-12 text-center rounded-3xl bg-gradient-to-b from-[#1e1e2e]/90 to-[#13131f]/95 backdrop-blur-2xl border-2 border-[#ff8c42]/40 shadow-2xl space-y-6">
+              <BorderBeam size={260} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
+
+              {/* Background Glyph Matrix in Ascension Altar */}
+              <div className="absolute inset-0 pointer-events-none opacity-25">
+                <GlyphMatrix cellSize={14} mutationRate={0.03} interval={100} color="#ff8c42" />
+              </div>
+
+              {/* Interactive Orbiting Circles Portal */}
+              <div className="relative flex h-60 w-full items-center justify-center overflow-hidden">
+                {/* Center Hearth Flame with Circling Animated Path Text */}
+                <div className="relative size-24 flex items-center justify-center z-10">
+                  <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center">
+                    <AnimatedPathText
+                      path="M 48, 48 m -40, 0 a 40,40 0 1,0 80,0 a 40,40 0 1,0 -80,0"
+                      viewBox="0 0 96 96"
+                      text="✦ SACRED ALTAR ✦ FIVE PILLARS ✦"
+                      duration={14}
+                      textClassName="text-[6.5px] tracking-[0.2em] fill-[#ffd166]/70 font-pixel"
+                      svgClassName="w-24 h-24"
+                    />
+                  </div>
+                  <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_30px_rgba(255,140,66,0.4)] flex items-center justify-center">
+                    <Flame className="w-7 h-7 text-[#ff8c42] animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Inner Orbit (Radius 70) */}
+                <OrbitingCircles radius={70} duration={12} reverse speed={1.2} iconSize={32}>
+                  <Coins className="w-4 h-4 text-[#ffd166]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={70} duration={12} delay={6} reverse speed={1.2} iconSize={32}>
+                  <Sparkles className="w-4 h-4 text-[#ffd166]" />
+                </OrbitingCircles>
+
+                {/* Outer Orbit (Radius 120) with the 5 Disciplines */}
+                <OrbitingCircles radius={120} duration={24} delay={0} iconSize={36}>
+                  <Sword className="w-4 h-4 text-[#ef4444]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={120} duration={24} delay={4.8} iconSize={36}>
+                  <Scroll className="w-4 h-4 text-[#3b82f6]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={120} duration={24} delay={9.6} iconSize={36}>
+                  <Sparkles className="w-4 h-4 text-[#ec4899]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={120} duration={24} delay={14.4} iconSize={36}>
+                  <Shield className="w-4 h-4 text-[#f59e0b]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={120} duration={24} delay={19.2} iconSize={36}>
+                  <Trophy className="w-4 h-4 text-[#10b981]" />
+                </OrbitingCircles>
+              </div>
+
+              <div className="space-y-2">
+                <MorphingText
+                  texts={[
+                    "YOUR BOARD IS BARE, ADVENTURER",
+                    "SUMMON 5 STARTER BOUNTIES",
+                    "THE HEARTH CALLS FOR EMBERS",
+                    "ASCEND THE FIVE SACRED DISCIPLINES",
+                  ]}
+                  className="text-base sm:text-lg text-[#ffd166]"
+                />
+                <p className="text-xs text-[#9a97ab] max-w-md mx-auto leading-relaxed">
+                  No active quests found on your roster. Populate your board with 5 starter bounties in one click, or post your own custom quest.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+                <button
+                  onClick={handleSummonStarters}
+                  disabled={isSummoning || categories.length === 0}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#ffd166] via-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-[0_4px_25px_rgba(255,140,66,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <Zap className="w-4 h-4 text-[#13131f]" />
+                  <span>{isSummoning ? "Summoning Bounties..." : "Summon 5 Starter Bounties"}</span>
+                </button>
+
+                <button
+                  onClick={handleOpenCreate}
+                  className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-[#13131f] border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs font-pixel text-[#f5f1e8] hover:text-[#ffd166] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Craft Custom Quest</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Active Quests 2-Column Grid */}
+          {!isLoading && quests.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {quests.map((quest) => (
+                <QuestCard
+                  key={quest.id}
+                  quest={quest}
+                  onEdit={handleOpenEdit}
+                  onDelete={(id) => deleteMutation.mutate(id)}
+                  isDeleting={deleteMutation.isPending}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       {/* Quest Create / Edit Modal */}
       <QuestModal
