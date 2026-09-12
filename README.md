@@ -58,7 +58,7 @@ PostgreSQL (Supabase, pooled connection)
 ---
 
 ## Local Setup
-1. `git clone https://github.com/themadjocker/Web_Hackathon.git && cd Web_Hackathon && npm install`
+1. `git clone https://github.com/adityarajIITj/emberkeep1.git && cd emberkeep1 && npm install`
 2. Copy `.env.example` to `.env` and fill in your Supabase project's values
 3. `npx prisma migrate dev` (or `npx prisma db push`)
 4. `npx tsx prisma/seed.ts`
