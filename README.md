@@ -6,8 +6,9 @@ EMBERKEEP is a full-stack Life RPG where real tasks are **Quests**, your streak 
 
 ---
 
-## Live Demo
-- **App**: [https://emberkeep1-eight.vercel.app](https://emberkeep1-eight.vercel.app)
+## Live Demo & Production Deployment
+- **Live URL**: [https://emberkeep1-eight.vercel.app](https://emberkeep1-eight.vercel.app)
+- **GitHub Repository**: [https://github.com/adityarajIITj/emberkeep1](https://github.com/adityarajIITj/emberkeep1)
 
 ---
 
