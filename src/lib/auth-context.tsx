@@ -22,12 +22,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const supabase = createClient();
 
   useEffect(() => {
+    // Only instantiate in browser runtime to ensure prerendering/SSR never crashes
+    let supabase: ReturnType<typeof createClient> | null = null;
+    try {
+      supabase = createClient();
+    } catch (err) {
+      console.warn("Supabase client skipped during build prerender:", err);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!supabase) {
+      setIsLoading(false);
+      return;
+    }
+
     async function getInitialSession() {
       try {
-        const { data } = await supabase.auth.getSession();
+        const { data } = await supabase!.auth.getSession();
         setSession(data.session);
         setUser(data.session?.user ?? null);
       } catch (err) {
@@ -50,10 +64,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []);
 
   const signOut = async () => {
     try {
+      const supabase = createClient();
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
