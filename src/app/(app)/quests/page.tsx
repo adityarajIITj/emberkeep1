@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Plus,
@@ -24,11 +24,15 @@ import { Particles } from "@/components/ui/particles";
 import { MorphingText } from "@/components/ui/morphing-text";
 import { Highlighter } from "@/components/ui/highlighter";
 import { BorderBeam } from "@/components/effects/BorderBeam";
+import { GlyphMatrix } from "@/components/ui/glyph-matrix";
+import AnimatedPathText from "@/components/ui/text-along-path";
+import VariableFontCursorProximity from "@/components/fancy/text/variable-font-cursor-proximity";
 import { fireQuestConfetti } from "@/components/effects/Confetti";
 import { sounds } from "@/lib/audio/retro-sound";
 
 export default function QuestsPage() {
   const queryClient = useQueryClient();
+  const questHeaderRef = useRef<HTMLDivElement>(null);
 
   const [selectedDiscipline, setSelectedDiscipline] = useState<string>("ALL");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("ALL");
@@ -256,19 +260,22 @@ export default function QuestsPage() {
           </p>
         </div>
 
-        <div className="hidden lg:flex flex-col p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#ff8c42]/30 backdrop-blur-md">
+        <div
+          ref={questHeaderRef}
+          className="hidden lg:flex flex-col p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#ff8c42]/30 backdrop-blur-md"
+        >
           <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
-            DAILY BOUNTY MOTTO
+            DAILY BOUNTY MOTTO (CURSOR PROXIMITY)
           </div>
-          <MorphingText
-            texts={[
-              "FORGE CHARACTER THROUGH ACTION",
-              "EARN SACRED XP & REPUTATION",
-              "CONQUER PROCRASTINATION",
-              "ASCEND TO GUILD CHAMPION",
-            ]}
-            className="text-xs font-pixel text-[#f5f1e8]"
-          />
+          <VariableFontCursorProximity
+            className="text-xs font-pixel text-[#f5f1e8] tracking-wide"
+            fromFontVariationSettings="'wght' 400, 'slnt' 0"
+            toFontVariationSettings="'wght' 900, 'slnt' -8"
+            radius={140}
+            containerRef={questHeaderRef}
+          >
+            FORGE CHARACTER THROUGH SACRED ACTION
+          </VariableFontCursorProximity>
         </div>
 
         <div className="flex items-center gap-3">
@@ -378,11 +385,28 @@ export default function QuestsPage() {
         <div className="relative overflow-hidden notch-card p-8 sm:p-12 text-center rounded-3xl bg-gradient-to-b from-[#1e1e2e]/90 to-[#13131f]/95 backdrop-blur-2xl border-2 border-[#ff8c42]/40 shadow-2xl space-y-6 max-w-2xl mx-auto my-6 z-10">
           <BorderBeam size={260} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
 
+          {/* Background Glyph Matrix in Ascension Altar */}
+          <div className="absolute inset-0 pointer-events-none opacity-25">
+            <GlyphMatrix cellSize={14} mutationRate={0.03} interval={100} color="#ff8c42" />
+          </div>
+
           {/* Interactive Orbiting Circles Portal */}
           <div className="relative flex h-60 w-full items-center justify-center overflow-hidden">
-            {/* Center Hearth Flame */}
-            <div className="w-16 h-16 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_30px_rgba(255,140,66,0.4)] flex items-center justify-center z-10">
-              <Flame className="w-8 h-8 text-[#ff8c42] animate-pulse" />
+            {/* Center Hearth Flame with Circling Animated Path Text */}
+            <div className="relative size-24 flex items-center justify-center z-10">
+              <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center">
+                <AnimatedPathText
+                  path="M 48, 48 m -40, 0 a 40,40 0 1,0 80,0 a 40,40 0 1,0 -80,0"
+                  viewBox="0 0 96 96"
+                  text="✦ SACRED ALTAR ✦ FIVE PILLARS ✦"
+                  duration={14}
+                  textClassName="text-[6.5px] tracking-[0.2em] fill-[#ffd166]/70 font-pixel"
+                  svgClassName="w-24 h-24"
+                />
+              </div>
+              <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_30px_rgba(255,140,66,0.4)] flex items-center justify-center">
+                <Flame className="w-7 h-7 text-[#ff8c42] animate-pulse" />
+              </div>
             </div>
 
             {/* Inner Orbit (Radius 70) */}
@@ -443,6 +467,37 @@ export default function QuestsPage() {
               <Plus className="w-4 h-4" />
               <span>Craft Custom Quest</span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 🔮 Runic Roster Oracle Strip with Glyph Matrix */}
+      {!isLoading && quests.length > 0 && (
+        <div className="relative overflow-hidden rounded-2xl bg-[#1e1e2e]/85 border border-[#ff8c42]/30 p-3.5 flex items-center justify-between gap-4 z-10 shadow-lg">
+          <div className="absolute inset-0 opacity-20 pointer-events-none -z-0">
+            <GlyphMatrix cellSize={12} mutationRate={0.03} interval={100} color="#ff8c42" />
+          </div>
+          <div className="flex items-center gap-3 relative z-10">
+            <div className="p-2 rounded-xl bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42]">
+              <Flame className="w-4 h-4 animate-pulse" />
+            </div>
+            <div>
+              <div className="text-[10px] font-pixel text-[#ffd166] uppercase tracking-wider">
+                SACRED GUILD RUNES • ACTIVE BOUNTIES
+              </div>
+              <div className="text-xs text-[#9a97ab]">
+                Showing <span className="text-[#ffd166] font-bold">{quests.length}</span> active quest {quests.length === 1 ? "bounty" : "bounties"} across the realm
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center gap-3 relative z-10 text-xs">
+            <span className="px-2.5 py-1 rounded-lg bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] font-mono text-[11px]">
+              TOTAL XP: <span className="text-[#ff8c42] font-bold">+{quests.reduce((acc, q) => acc + (q.reward_awarded?.xp || (q.difficulty === "EPIC" ? 100 : q.difficulty === "HARD" ? 50 : q.difficulty === "MEDIUM" ? 25 : 10)), 0)}</span>
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] font-mono text-[11px]">
+              GOLD: <span className="text-[#ffd166] font-bold">+{quests.reduce((acc, q) => acc + (q.reward_awarded?.gold || (q.difficulty === "EPIC" ? 40 : q.difficulty === "HARD" ? 20 : q.difficulty === "MEDIUM" ? 10 : 4)), 0)}g</span>
+            </span>
           </div>
         </div>
       )}

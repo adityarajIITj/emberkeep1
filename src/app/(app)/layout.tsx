@@ -7,6 +7,8 @@ import { MobileNav } from "@/components/layout/MobileNav";
 import { EmberParticles } from "@/components/animations/EmberParticles";
 import { PageTransition } from "@/components/animations/PageTransition";
 import { Dock, DockIcon } from "@/components/ui/dock";
+import Novatrix from "@/components/ui/novatrix-background";
+import { FlickeringGrid } from "@/components/ui/flickering-grid";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard,
@@ -51,7 +53,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div
       className={`min-h-screen flex flex-col bg-[#0d0d17] text-[#f5f1e8] relative selection:bg-[#ff8c42]/30 selection:text-[#ffd166] pb-24 ${themeClass}`}
     >
-      {/* Ambient Floating Ember Particles */}
+      {/* 1. Dynamic Novatrix Silk Shader Background */}
+      <div className="fixed inset-0 pointer-events-none -z-30 overflow-hidden opacity-25">
+        <Novatrix color={[1.0, 0.45, 0.18]} amplitude={0.25} speed={0.7} />
+      </div>
+
+      {/* 2. Cyber-Fantasy Flickering Grid Matrix */}
+      <div className="fixed inset-0 pointer-events-none -z-20 overflow-hidden opacity-25">
+        <FlickeringGrid
+          className="size-full"
+          squareSize={4}
+          gridGap={8}
+          color="#ff8c42"
+          maxOpacity={0.35}
+          flickerChance={0.12}
+        />
+      </div>
+
+      {/* 3. Ambient Floating Ember Particles */}
       <EmberParticles count={25} />
 
       {/* Persistent Guildhall Top HUD */}

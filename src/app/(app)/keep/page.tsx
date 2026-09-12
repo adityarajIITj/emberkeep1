@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { EmberFlame } from "@/components/animations/EmberFlame";
@@ -16,6 +16,9 @@ import { Particles } from "@/components/ui/particles";
 import { MorphingText } from "@/components/ui/morphing-text";
 import { Highlighter } from "@/components/ui/highlighter";
 import { IconCloud } from "@/components/ui/icon-cloud";
+import BoxCarousel, { CarouselItem } from "@/components/ui/box-carousel";
+import AnimatedPathText from "@/components/ui/text-along-path";
+import VariableFontCursorProximity from "@/components/fancy/text/variable-font-cursor-proximity";
 import {
   Flame,
   User,
@@ -36,6 +39,8 @@ import {
 } from "lucide-react";
 
 export default function KeepPage() {
+  const bannerRef = useRef<HTMLDivElement>(null);
+
   const { data: character } = useQuery({
     queryKey: ["character"],
     queryFn: async () => {
@@ -45,6 +50,54 @@ export default function KeepPage() {
     },
     staleTime: 1000 * 30,
   });
+
+  const realmRelics: CarouselItem[] = [
+    {
+      id: "relic-1",
+      title: "Aegis of Will",
+      subtitle: "LEGENDARY",
+      badge: "RELIC OF DEFENSE",
+      description: "Infused with the discipline of 100 finished bounties. Shields your hearth from cold winds.",
+      color: "#ff8c42",
+      icon: <Shield className="w-4 h-4 text-[#ff8c42]" />,
+    },
+    {
+      id: "relic-2",
+      title: "Sunken Blade",
+      subtitle: "MYTHIC",
+      badge: "CHRONO EDGE",
+      description: "Forged in the depths of uninterrupted focus. Slices cleanly through procrastination.",
+      color: "#ffd166",
+      icon: <Sword className="w-4 h-4 text-[#ffd166]" />,
+    },
+    {
+      id: "relic-3",
+      title: "Ancient Tome",
+      subtitle: "ARTIFACT",
+      badge: "DEEP LORE",
+      description: "Contains forgotten scrolls of wisdom and mastery across the five sacred pillars.",
+      color: "#38bdf8",
+      icon: <BookOpen className="w-4 h-4 text-[#38bdf8]" />,
+    },
+    {
+      id: "relic-4",
+      title: "Phoenix Amulet",
+      subtitle: "SACRED",
+      badge: "STREAK WARD",
+      description: "Channeling primal fire to resurrect streaks on days of sudden adversity.",
+      color: "#ec4899",
+      icon: <Sparkles className="w-4 h-4 text-[#ec4899]" />,
+    },
+    {
+      id: "relic-5",
+      title: "Hearth Crown",
+      subtitle: "CHAMPION",
+      badge: "EMBER MAJESTY",
+      description: "Reserved for guild legends whose roaring fire illuminates the entire realm.",
+      color: "#f59e0b",
+      icon: <Crown className="w-4 h-4 text-[#f59e0b]" />,
+    },
+  ];
 
   const xpProgress = xpProgressInLevel(character?.total_xp || 0);
   const rankTitle = character ? getRankTitle(character.level) : "Novice";
@@ -93,25 +146,28 @@ export default function KeepPage() {
       {/* Dynamic Ambient Particles */}
       <Particles className="opacity-40" quantity={40} color="#ff8c42" />
 
-      {/* Guildhall Mantras Header Banner */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#1e1e2e]/75 backdrop-blur-xl border border-[#ff8c42]/35 shadow-lg">
+      {/* Guildhall Mantras Header Banner with Cursor Proximity Interaction */}
+      <div
+        ref={bannerRef}
+        className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#1e1e2e]/75 backdrop-blur-xl border border-[#ff8c42]/35 shadow-lg group"
+      >
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42]">
             <Flame className="w-5 h-5 animate-pulse" />
           </div>
           <div>
-            <div className="text-[10px] font-pixel text-[#ffd166] uppercase tracking-wider">
-              Guildhall Sanctuary • Daily Oath
+            <div className="text-[10px] font-pixel text-[#ffd166] uppercase tracking-wider mb-1">
+              Guildhall Sanctuary • Daily Oath (Proximity Reactive)
             </div>
-            <MorphingText
-              texts={[
-                "FEED YOUR SACRED EMBER TODAY",
-                "FORGE INDOMITABLE DISCIPLINE",
-                "DEFEAT PROCRASTINATION",
-                "ASCEND TO GUILD LEGEND",
-              ]}
-              className="text-sm sm:text-base font-pixel text-[#f5f1e8]"
-            />
+            <VariableFontCursorProximity
+              className="text-xs sm:text-sm font-pixel text-[#f5f1e8] tracking-wide"
+              fromFontVariationSettings="'wght' 400, 'slnt' 0"
+              toFontVariationSettings="'wght' 900, 'slnt' -10"
+              radius={140}
+              containerRef={bannerRef}
+            >
+              FEED YOUR SACRED EMBER • FORGE INDOMITABLE DISCIPLINE
+            </VariableFontCursorProximity>
           </div>
         </div>
 
@@ -279,19 +335,31 @@ export default function KeepPage() {
                 )}
               </div>
 
-              {/* Central Hearth with Clean Planetary Orbiting Sparks and Flame */}
+              {/* Central Hearth with Clean Planetary Orbiting Sparks, Animated Path Text and Flame */}
               <div className="shrink-0 relative flex flex-col items-center justify-center p-2">
-                <div className="relative size-28 flex items-center justify-center">
+                <div className="relative size-32 flex items-center justify-center">
+                  {/* Circling Animated Path Text */}
+                  <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center -z-0">
+                    <AnimatedPathText
+                      path="M 64, 64 m -52, 0 a 52,52 0 1,0 104,0 a 52,52 0 1,0 -104,0"
+                      viewBox="0 0 128 128"
+                      text="✦ SACRED EMBER ✦ ROARING HEARTH ✦ STOKE THE FLAME ✦"
+                      duration={16}
+                      textClassName="text-[7.5px] tracking-[0.2em] fill-[#ff8c42]/60 font-pixel"
+                      svgClassName="w-32 h-32"
+                    />
+                  </div>
+
                   {/* Orbiting Spark Ring */}
-                  <OrbitingCircles radius={44} duration={12} reverse speed={1.2} iconSize={20} path={true}>
+                  <OrbitingCircles radius={38} duration={12} reverse speed={1.2} iconSize={18} path={true}>
                     <Zap className="w-2.5 h-2.5 text-[#ffd166]" />
                   </OrbitingCircles>
-                  <OrbitingCircles radius={44} duration={12} delay={6} reverse speed={1.2} iconSize={20} path={false}>
+                  <OrbitingCircles radius={38} duration={12} delay={6} reverse speed={1.2} iconSize={18} path={false}>
                     <Sparkles className="w-2.5 h-2.5 text-[#ff8c42]" />
                   </OrbitingCircles>
 
                   <div className="relative z-10 p-2.5 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_25px_rgba(255,140,66,0.35)] flex items-center justify-center">
-                    <Flame className="w-8 h-8 text-[#ff8c42] animate-pulse filter drop-shadow-[0_0_10px_rgba(255,140,66,0.5)]" />
+                    <Flame className="w-7 h-7 text-[#ff8c42] animate-pulse filter drop-shadow-[0_0_10px_rgba(255,140,66,0.5)]" />
                   </div>
                 </div>
 
@@ -379,6 +447,25 @@ export default function KeepPage() {
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </MagicCard>
+
+          {/* 🌟 3D Realm Relics Carousel (BoxCarousel) */}
+          <div className="p-4 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/40 shadow-xl flex flex-col items-center relative overflow-hidden">
+            <div className="w-full flex items-center justify-between mb-3">
+              <div className="flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel">
+                <Crown className="w-3.5 h-3.5 text-[#ffd166]" />
+                <span>REALM RELICS</span>
+              </div>
+              <span className="text-[9px] text-[#9a97ab] font-pixel">3D CUBE</span>
+            </div>
+
+            <BoxCarousel
+              items={realmRelics}
+              width={240}
+              height={165}
+              perspective={850}
+              autoRotateInterval={4500}
+            />
+          </div>
         </div>
       </div>
     </div>

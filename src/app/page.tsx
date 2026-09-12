@@ -12,6 +12,9 @@ import { SpotlightCard } from "@/components/effects/SpotlightCard";
 import { BorderBeam } from "@/components/effects/BorderBeam";
 import { fireQuestConfetti } from "@/components/effects/Confetti";
 import { sounds } from "@/lib/audio/retro-sound";
+import Novatrix from "@/components/ui/novatrix-background";
+import { FlickeringGrid } from "@/components/ui/flickering-grid";
+import AnimatedPathText from "@/components/ui/text-along-path";
 import {
   Flame,
   Shield,
@@ -107,11 +110,28 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-between p-4 sm:p-8 md:p-12 relative overflow-hidden bg-[#0d0d17] text-[#f5f1e8] scanlines selection:bg-[#ff8c42]/30 selection:text-[#ffd166]">
       {/* 1. 21st.dev WebGL Aurora Shader Background */}
-      <div className="absolute inset-0 pointer-events-auto opacity-45 z-0">
+      <div className="absolute inset-0 pointer-events-auto opacity-35 z-0">
         <ShaderBackground className="w-full h-full" />
       </div>
 
-      {/* 2. Interactive Pixel Trail on Cursor */}
+      {/* 2. Novatrix Silk Shader Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-25 z-0">
+        <Novatrix color={[1.0, 0.45, 0.18]} amplitude={0.2} speed={0.7} />
+      </div>
+
+      {/* 3. Cyber Flickering Grid Matrix */}
+      <div className="absolute inset-0 pointer-events-none opacity-20 z-0">
+        <FlickeringGrid
+          className="size-full"
+          squareSize={4}
+          gridGap={8}
+          color="#ff8c42"
+          maxOpacity={0.35}
+          flickerChance={0.12}
+        />
+      </div>
+
+      {/* 4. Interactive Pixel Trail on Cursor */}
       <PixelTrail pixelSize={22} fadeDuration={500} />
 
       {/* Ambient background glow */}
@@ -146,8 +166,19 @@ export default function Home() {
 
       {/* Hero Section */}
       <div className="max-w-4xl w-full z-10 space-y-7 text-center my-auto py-6">
-        {/* Animated Central Hearth Emblem with BorderBeam */}
+        {/* Animated Central Hearth Emblem with BorderBeam and Circling Path Text */}
         <div className="relative inline-block">
+          <div className="absolute -inset-8 flex items-center justify-center pointer-events-none z-10">
+            <AnimatedPathText
+              path="M 80, 80 m -64, 0 a 64,64 0 1,0 128,0 a 64,64 0 1,0 -128,0"
+              viewBox="0 0 160 160"
+              text="✦ EMBERKEEP ✦ TURN TO-DO INTO LEGEND ✦"
+              duration={16}
+              textClassName="text-[8px] tracking-[0.22em] fill-[#ff8c42]/80 font-pixel"
+              svgClassName="w-44 h-44"
+            />
+          </div>
+
           <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#ff8c42]/50 shadow-[0_0_50px_rgba(255,140,66,0.3)] flex items-center justify-center mx-auto overflow-hidden relative">
             <BorderBeam size={200} duration={6} colorFrom="#ff8c42" colorTo="#ffd166" />
             <Flame className="w-14 h-14 text-[#ff8c42] animate-pulse relative z-10" />

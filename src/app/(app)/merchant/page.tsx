@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fireQuestConfetti } from "@/components/effects/Confetti";
 import {
@@ -23,6 +23,9 @@ import { MorphingText } from "@/components/ui/morphing-text";
 import { Highlighter } from "@/components/ui/highlighter";
 import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 import { AnimatedNumber } from "@/components/effects/AnimatedNumber";
+import BoxCarousel, { CarouselItem } from "@/components/ui/box-carousel";
+import AnimatedPathText from "@/components/ui/text-along-path";
+import VariableFontCursorProximity from "@/components/fancy/text/variable-font-cursor-proximity";
 import { sounds } from "@/lib/audio/retro-sound";
 
 interface ShopItemData {
@@ -40,8 +43,48 @@ interface ShopItemData {
 
 export default function MerchantPage() {
   const queryClient = useQueryClient();
+  const merchantBannerRef = useRef<HTMLDivElement>(null);
   const [selectedType, setSelectedType] = useState<string>("ALL");
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+
+  const featuredRelics: CarouselItem[] = [
+    {
+      id: "shop-relic-1",
+      title: "Crown of Embers",
+      subtitle: "500g",
+      badge: "LEGENDARY CROWN",
+      description: "Infused with eternal guild flame. Equips the ultimate radiant glow across your guildhall profile.",
+      color: "#ffd166",
+      icon: <Crown className="w-4 h-4 text-[#ffd166]" />,
+    },
+    {
+      id: "shop-relic-2",
+      title: "Citadel Crest",
+      subtitle: "350g",
+      badge: "MYTHIC FRAME",
+      description: "Forged in the legendary Citadel of High Valor. Shields your adventurer avatar with emerald light.",
+      color: "#10b981",
+      icon: <Shield className="w-4 h-4 text-[#10b981]" />,
+    },
+    {
+      id: "shop-relic-3",
+      title: "Twilight Horizon",
+      subtitle: "450g",
+      badge: "REALM THEME",
+      description: "Bathes the entire guildhall in celestial amethyst and violet dawn hues.",
+      color: "#a855f7",
+      icon: <Palette className="w-4 h-4 text-[#a855f7]" />,
+    },
+    {
+      id: "shop-relic-4",
+      title: "Abyss Monarch",
+      subtitle: "600g",
+      badge: "EXCLUSIVE TITLE",
+      description: "Granted only to champions who conquered deep procrastination in the darkest hours.",
+      color: "#ef4444",
+      icon: <Flame className="w-4 h-4 text-[#ef4444]" />,
+    },
+  ];
 
   const { data: character } = useQuery({
     queryKey: ["character"],
@@ -212,33 +255,52 @@ export default function MerchantPage() {
         </div>
       </div>
 
-      {/* Merchant Altar Showcase Banner with Orbiting Circles */}
-      <div className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-[#1e1e2e]/95 via-[#1a1a2b]/95 to-[#13131f]/95 border-2 border-[#ffd166]/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 z-10">
+      {/* Merchant Altar Showcase Banner with Proximity Motto & Orbiting Circles */}
+      <div
+        ref={merchantBannerRef}
+        className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-[#1e1e2e]/95 via-[#1a1a2b]/95 to-[#13131f]/95 border-2 border-[#ffd166]/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 z-10 group"
+      >
         <div className="space-y-2 text-center md:text-left max-w-md">
           <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-[#ffd166]/15 border border-[#ffd166]/40 text-[#ffd166] text-[10px] font-pixel">
             <Sparkles className="w-3 h-3 text-[#ffd166]" />
             <span>ENCHANTED WARES OF THE GUILD</span>
           </div>
-          <MorphingText
-            texts={[
-              "EXCHANGE SACRED GOLD FOR PRESTIGE",
-              "UNLOCK MAJESTIC CRESTS & TITLES",
-              "FORGE YOUR VISUAL GUILD LEGEND",
-              "RARE COSMETICS BESTOWED UPON HEROES",
-            ]}
-            className="text-sm sm:text-base font-pixel text-[#f5f1e8]"
-          />
-          <p className="text-xs text-[#9a97ab] leading-relaxed">
+          <div>
+            <div className="text-[10px] font-pixel text-[#9a97ab] uppercase mb-1">
+              Bazaar Creed (Hover Proximity)
+            </div>
+            <VariableFontCursorProximity
+              className="text-xs sm:text-sm font-pixel text-[#ffd166] tracking-wide"
+              fromFontVariationSettings="'wght' 400, 'slnt' 0"
+              toFontVariationSettings="'wght' 900, 'slnt' -8"
+              radius={150}
+              containerRef={merchantBannerRef}
+            >
+              EXCHANGE SACRED GOLD FOR PRESTIGE & MAJESTY
+            </VariableFontCursorProximity>
+          </div>
+          <p className="text-xs text-[#9a97ab] leading-relaxed mt-1">
             Every cosmetic acquired here is permanent to your adventurer account. Equip titles and frames to reflect your guild stature.
           </p>
         </div>
 
-        {/* Orbiting Treasure Pedestal */}
-        <div className="relative flex items-center justify-center size-36 shrink-0">
-          <OrbitingCircles radius={52} duration={12} reverse speed={1.2} iconSize={26} path={true}>
+        {/* Orbiting Treasure Pedestal with Animated Path Text */}
+        <div className="relative flex items-center justify-center size-40 shrink-0">
+          <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center -z-0">
+            <AnimatedPathText
+              path="M 80, 80 m -60, 0 a 60,60 0 1,0 120,0 a 60,60 0 1,0 -120,0"
+              viewBox="0 0 160 160"
+              text="✦ BAZAAR VAULT ✦ SACRED TREASURES ✦"
+              duration={16}
+              textClassName="text-[8px] tracking-[0.22em] fill-[#ffd166]/70 font-pixel"
+              svgClassName="w-40 h-40"
+            />
+          </div>
+
+          <OrbitingCircles radius={44} duration={12} reverse speed={1.2} iconSize={24} path={true}>
             <Crown className="w-3.5 h-3.5 text-[#ffd166]" />
           </OrbitingCircles>
-          <OrbitingCircles radius={52} duration={12} delay={6} reverse speed={1.2} iconSize={26} path={false}>
+          <OrbitingCircles radius={44} duration={12} delay={6} reverse speed={1.2} iconSize={24} path={false}>
             <Shield className="w-3.5 h-3.5 text-[#8b5cf6]" />
           </OrbitingCircles>
 
@@ -246,6 +308,32 @@ export default function MerchantPage() {
             <Gem className="w-7 h-7 text-[#ffd166] animate-pulse" />
           </div>
         </div>
+      </div>
+
+      {/* 🌟 3D Featured Relics Carousel in Bazaar */}
+      <div className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/40 shadow-xl flex flex-col items-center relative overflow-hidden z-10">
+        <div className="w-full flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[#ffd166]" />
+            <span className="font-pixel text-xs text-[#f5f1e8]">
+              VAULT SHOWCASE • RARE RELICS OF THE REALM
+            </span>
+          </div>
+          <span className="text-[10px] text-[#ffd166] font-pixel">
+            3D INTERACTIVE CUBE
+          </span>
+        </div>
+        <p className="text-xs text-[#9a97ab] self-start mb-4">
+          Preview legendary equipment and cosmetic wonders crafted by the ancient guild artisans.
+        </p>
+
+        <BoxCarousel
+          items={featuredRelics}
+          width={280}
+          height={175}
+          perspective={900}
+          autoRotateInterval={4000}
+        />
       </div>
 
       {/* Filter Tabs */}

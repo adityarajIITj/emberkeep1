@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DisciplineRadar } from "@/components/character/DisciplineRadar";
 import { StreakHeatmap } from "@/components/character/StreakHeatmap";
@@ -11,6 +11,9 @@ import { MorphingText } from "@/components/ui/morphing-text";
 import { Highlighter } from "@/components/ui/highlighter";
 import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 import { IconCloud } from "@/components/ui/icon-cloud";
+import { GlyphMatrix } from "@/components/ui/glyph-matrix";
+import AnimatedPathText from "@/components/ui/text-along-path";
+import VariableFontCursorProximity from "@/components/fancy/text/variable-font-cursor-proximity";
 import {
   User,
   Crown,
@@ -30,6 +33,8 @@ import {
 } from "lucide-react";
 
 export default function CharacterPage() {
+  const characterHeaderRef = useRef<HTMLDivElement>(null);
+
   const { data: character } = useQuery({
     queryKey: ["character"],
     queryFn: async () => {
@@ -83,20 +88,22 @@ export default function CharacterPage() {
           </p>
         </div>
 
-        <div className="p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#8b5cf6]/30 backdrop-blur-md">
+        <div
+          ref={characterHeaderRef}
+          className="p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#8b5cf6]/30 backdrop-blur-md"
+        >
           <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
-            MINDSET & ASCENSION
+            MINDSET & ASCENSION (HOVER PROXIMITY)
           </div>
-          <MorphingText
-            texts={[
-              "PHYSICAL VESSEL & VITALITY",
-              "COGNITIVE ACUITY & WISDOM",
-              "INNER STILLNESS & SERENITY",
-              "CREATIVE MASTERY & CODE",
-              "UNWAVERING DEEP FOCUS",
-            ]}
-            className="text-xs font-pixel text-[#f5f1e8]"
-          />
+          <VariableFontCursorProximity
+            className="text-xs font-pixel text-[#f5f1e8] tracking-wide"
+            fromFontVariationSettings="'wght' 400, 'slnt' 0"
+            toFontVariationSettings="'wght' 900, 'slnt' -8"
+            radius={140}
+            containerRef={characterHeaderRef}
+          >
+            UNWAVERING FOCUS ACROSS FIVE PILLARS
+          </VariableFontCursorProximity>
         </div>
       </div>
 
@@ -109,16 +116,27 @@ export default function CharacterPage() {
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              {/* Avatar with Planetary Orbiting Ascension Circles */}
-              <div className="relative flex items-center justify-center size-20 shrink-0">
-                <OrbitingCircles radius={36} duration={14} reverse speed={1} iconSize={20} path={true}>
+              {/* Avatar with Planetary Orbiting Ascension Circles & Animated Path Text */}
+              <div className="relative flex items-center justify-center size-24 shrink-0">
+                <div className="absolute inset-0 size-full pointer-events-none flex items-center justify-center -z-0">
+                  <AnimatedPathText
+                    path="M 48, 48 m -38, 0 a 38,38 0 1,0 76,0 a 38,38 0 1,0 -76,0"
+                    viewBox="0 0 96 96"
+                    text="✦ ADVENTURER DOSSIER ✦ FIVE PILLARS ✦"
+                    duration={16}
+                    textClassName="text-[6.5px] tracking-[0.2em] fill-[#8b5cf6]/70 font-pixel"
+                    svgClassName="w-24 h-24"
+                  />
+                </div>
+
+                <OrbitingCircles radius={32} duration={14} reverse speed={1} iconSize={18} path={true}>
                   <Sparkles className="w-2.5 h-2.5 text-[#ffd166]" />
                 </OrbitingCircles>
-                <OrbitingCircles radius={36} duration={14} delay={7} reverse speed={1} iconSize={20} path={false}>
+                <OrbitingCircles radius={32} duration={14} delay={7} reverse speed={1} iconSize={18} path={false}>
                   <Flame className="w-2.5 h-2.5 text-[#ff8c42]" />
                 </OrbitingCircles>
 
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#ff8c42] to-[#8b5cf6] p-0.5 shadow-xl flex items-center justify-center font-pixel text-2xl text-[#13131f] z-10">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#ff8c42] to-[#8b5cf6] p-0.5 shadow-xl flex items-center justify-center font-pixel text-xl text-[#13131f] z-10">
                   {character?.user?.display_name?.[0]?.toUpperCase() || "A"}
                 </div>
               </div>
@@ -220,8 +238,13 @@ export default function CharacterPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10">
         {/* Radar Chart + 3D Skill Cloud (6 cols) */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="notch-card p-6 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] shadow-xl space-y-4">
-            <div className="flex items-center justify-between">
+          <div className="notch-card p-6 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] shadow-xl space-y-4 relative overflow-hidden">
+            {/* Ambient Arcane Glyph Matrix Stream */}
+            <div className="absolute inset-0 opacity-15 pointer-events-none -z-0">
+              <GlyphMatrix cellSize={14} mutationRate={0.03} interval={120} color="#8b5cf6" />
+            </div>
+
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <h3 className="font-pixel text-xs sm:text-sm text-[#f5f1e8]">
                   DISCIPLINE RADAR PENTAGON
@@ -233,7 +256,9 @@ export default function CharacterPage() {
             </div>
 
             {/* Recharts Pentagon */}
-            <DisciplineRadar disciplines={character?.disciplines || []} />
+            <div className="relative z-10">
+              <DisciplineRadar disciplines={character?.disciplines || []} />
+            </div>
           </div>
 
           {/* Interactive 3D Sphere of Runes & Attributes */}

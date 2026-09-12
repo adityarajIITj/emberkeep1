@@ -1,3 +1,2 @@
-import Novatrix from "@/components/ui/novatrix-background";
-export default Novatrix;
-export { Novatrix };
+export * from "@/components/ui/novatrix-background";
+export { default } from "@/components/ui/novatrix-background";
