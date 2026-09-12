@@ -46,38 +46,32 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      // Auto-detect timezone per §8 & §12
       const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
-      const { data, error } = await supabase.auth.signUp({
-        email: result.data.email,
-        password: result.data.password,
-        options: {
-          data: {
-            timezone: detectedTimezone,
-            display_name: result.data.email.split("@")[0],
-          },
-        },
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: result.data.email,
+          password: result.data.password,
+          confirmPassword: result.data.confirmPassword,
+          timezone: detectedTimezone,
+          displayName: result.data.email.split("@")[0],
+        }),
       });
 
-      if (error) {
-        if (error.message?.includes("fetch") || error.message?.includes("Failed to fetch")) {
-          setServerError(
-            "Network error connecting to authentication server. If you have an ad-blocker (uBlock, Brave Shields, AdGuard) enabled, please pause it for this site and retry."
-          );
-        } else {
-          setServerError(error.message);
-        }
+      const data = await res.json();
+
+      if (!res.ok) {
+        setServerError(data.error?.message || "Failed to create account. Please try again.");
         setIsLoading(false);
         return;
       }
 
       if (data.session) {
-        // Immediate session active -> go to keep or onboarding
         router.push("/onboarding");
         router.refresh();
       } else {
-        // Confirmation email sent or awaiting verification
         router.push("/login?notice=account-created");
       }
     } catch (err) {

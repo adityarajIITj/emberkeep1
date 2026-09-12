@@ -60,13 +60,19 @@ function LoginForm() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: result.data.email,
-        password: result.data.password,
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: result.data.email,
+          password: result.data.password,
+        }),
       });
 
-      if (error) {
-        setServerError("Invalid email or passphrase. Check credentials or Kindle an Ember.");
+      const data = await res.json();
+
+      if (!res.ok) {
+        setServerError(data.error?.message || "Invalid email or passphrase. Check credentials or Kindle an Ember.");
         setIsLoading(false);
         return;
       }
