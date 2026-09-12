@@ -41,7 +41,6 @@ interface DockIconProps {
 
 export function DockIcon({ className, children, mouseX, label }: DockIconProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = React.useState(false);
 
   const defaultMouseX = useMotionValue(Infinity);
   const activeMouseX = mouseX || defaultMouseX;
@@ -55,21 +54,11 @@ export function DockIcon({ className, children, mouseX, label }: DockIconProps) 
   const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
 
   return (
-    <div
-      className="relative flex flex-col items-center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {label && isHovered && (
-        <motion.div
-          initial={{ opacity: 0, y: 6, scale: 0.88 }}
-          animate={{ opacity: 1, y: -12, scale: 1 }}
-          exit={{ opacity: 0, y: 6, scale: 0.88 }}
-          transition={{ duration: 0.15 }}
-          className="absolute -top-7 whitespace-nowrap px-2.5 py-1 rounded-lg bg-[#1e1e2e] border border-[#ff8c42]/60 text-[10px] font-pixel text-[#ffd166] shadow-[0_4px_16px_rgba(0,0,0,0.85)] pointer-events-none z-50"
-        >
+    <div className="relative flex flex-col items-center group/dock">
+      {label && (
+        <div className="absolute -top-8 whitespace-nowrap px-2.5 py-1 rounded-lg bg-[#1e1e2e] border border-[#ff8c42]/60 text-[10px] font-pixel text-[#ffd166] shadow-[0_4px_16px_rgba(0,0,0,0.9)] pointer-events-none opacity-0 group-hover/dock:opacity-100 group-hover/dock:-translate-y-1.5 transition-all duration-200 z-50">
           {label}
-        </motion.div>
+        </div>
       )}
       <motion.div
         ref={ref}
