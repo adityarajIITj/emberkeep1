@@ -13,8 +13,15 @@ import {
   Crown,
   Palette,
   CheckCircle2,
+  Flame,
+  Gem,
+  Zap,
 } from "lucide-react";
-import { SpotlightCard } from "@/components/effects/SpotlightCard";
+import { MagicCard } from "@/components/ui/magic-card";
+import { Particles } from "@/components/ui/particles";
+import { MorphingText } from "@/components/ui/morphing-text";
+import { Highlighter } from "@/components/ui/highlighter";
+import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 import { AnimatedNumber } from "@/components/effects/AnimatedNumber";
 import { sounds } from "@/lib/audio/retro-sound";
 
@@ -80,7 +87,7 @@ export default function MerchantPage() {
     },
   });
 
-  // Equip Mutation (Equip Now action from the shop!)
+  // Equip Mutation
   const equipMutation = useMutation({
     mutationFn: async ({ inventoryId }: { inventoryId: string }) => {
       const res = await fetch(`/api/inventory/${inventoryId}/equip`, {
@@ -119,9 +126,9 @@ export default function MerchantPage() {
       if (item.key === "theme_abyss") gradient = "from-[#dc2626] via-[#7c3aed] to-[#1e1e2e]";
 
       return (
-        <div className="w-full h-14 rounded-lg bg-[#13131f] border border-[#2e2e45] p-1.5 flex items-center justify-center">
-          <div className={`w-full h-full rounded-md bg-gradient-to-r ${gradient} opacity-80 flex items-center justify-center`}>
-            <Palette className="w-4 h-4 text-[#13131f]" />
+        <div className="w-full h-16 rounded-xl bg-[#13131f] border border-[#2e2e45] p-2 flex items-center justify-center shadow-inner">
+          <div className={`w-full h-full rounded-lg bg-gradient-to-r ${gradient} opacity-85 flex items-center justify-center shadow-md`}>
+            <Palette className="w-5 h-5 text-[#13131f]" />
           </div>
         </div>
       );
@@ -129,9 +136,9 @@ export default function MerchantPage() {
 
     if (item.type === "TITLE") {
       return (
-        <div className="w-full h-14 rounded-lg bg-[#13131f] border border-[#2e2e45] flex items-center justify-center px-3">
-          <div className="px-2.5 py-1 rounded bg-[#ffd166]/10 border border-[#ffd166]/40 text-[#ffd166] font-pixel text-[11px] flex items-center gap-1.5">
-            <Crown className="w-3 h-3" />
+        <div className="w-full h-16 rounded-xl bg-[#13131f] border border-[#2e2e45] flex items-center justify-center px-3 shadow-inner">
+          <div className="px-3 py-1.5 rounded-lg bg-[#ffd166]/15 border border-[#ffd166]/50 text-[#ffd166] font-pixel text-xs flex items-center gap-1.5 shadow-[0_0_12px_rgba(255,209,102,0.2)]">
+            <Crown className="w-3.5 h-3.5" />
             <span>{item.name}</span>
           </div>
         </div>
@@ -140,13 +147,13 @@ export default function MerchantPage() {
 
     if (item.type === "AVATAR_FRAME") {
       let borderColor = "border-[#4ade80]";
-      if (item.key === "frame_ember") borderColor = "border-[#ff8c42] shadow-[0_0_12px_#ff8c42]";
-      if (item.key === "frame_celestial") borderColor = "border-[#ffd166] shadow-[0_0_15px_#ffd166]";
+      if (item.key === "frame_ember") borderColor = "border-[#ff8c42] shadow-[0_0_15px_#ff8c42]";
+      if (item.key === "frame_celestial") borderColor = "border-[#ffd166] shadow-[0_0_18px_#ffd166]";
 
       return (
-        <div className="w-full h-14 rounded-lg bg-[#13131f] border border-[#2e2e45] flex items-center justify-center">
-          <div className={`w-10 h-10 rounded-xl bg-[#1e1e2e] border-2 ${borderColor} flex items-center justify-center`}>
-            <Shield className="w-4 h-4 text-[#9a97ab]" />
+        <div className="w-full h-16 rounded-xl bg-[#13131f] border border-[#2e2e45] flex items-center justify-center shadow-inner">
+          <div className={`w-11 h-11 rounded-xl bg-[#1e1e2e] border-2 ${borderColor} flex items-center justify-center`}>
+            <Shield className="w-5 h-5 text-[#ffd166]" />
           </div>
         </div>
       );
@@ -155,35 +162,94 @@ export default function MerchantPage() {
     return null;
   };
 
+  const getSpotlightColor = (type: string) => {
+    switch (type) {
+      case "TITLE":
+        return "rgba(255, 209, 102, 0.22)";
+      case "AVATAR_FRAME":
+        return "rgba(139, 92, 246, 0.22)";
+      case "THEME":
+        return "rgba(255, 140, 66, 0.22)";
+      default:
+        return "rgba(255, 209, 102, 0.18)";
+    }
+  };
+
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2e2e45]">
+    <div className="space-y-6 relative animate-fadeIn">
+      {/* Golden Treasure Particles */}
+      <Particles className="opacity-30" quantity={35} color="#ffd166" />
+
+      {/* Header with Morphing Merchant Quotes */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#2e2e45] relative z-10">
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel mb-1">
             <ShoppingBag className="w-3.5 h-3.5 text-[#ffd166]" />
             <span>BAZAAR OF EMBERKEEP</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8]">
-            THE MERCHANT
+          <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8] flex items-center gap-2">
+            <span>THE MERCHANT</span>
           </h1>
-          <p className="text-xs text-[#9a97ab] mt-1">
-            Trade your quest gold for prestigious titles, frames, and themes
+          <p className="text-xs text-[#9a97ab] mt-1 flex items-center gap-1.5 flex-wrap">
+            <span>Exchange hard-won quest gold for prestigious</span>
+            <Highlighter action="underline" color="#ffd166">
+              Cosmetic Relics & Titles
+            </Highlighter>
           </p>
         </div>
 
-        {/* Vault balance pill with AnimatedNumber */}
-        <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1e1e2e] border-2 border-[#ffd166]/40 shadow-md self-start sm:self-auto">
-          <Coins className="w-4 h-4 text-[#ffd166] animate-pulse" />
-          <span className="text-xs text-[#9a97ab]">Your Vault:</span>
-          <span className="font-pixel text-sm text-[#ffd166]">
-            <AnimatedNumber value={character?.gold || 0} />g
-          </span>
+        {/* Vault balance pill */}
+        <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#ffd166]/40 shadow-xl backdrop-blur-md self-start md:self-auto">
+          <div className="p-2 rounded-xl bg-[#ffd166]/15 border border-[#ffd166]/40 text-[#ffd166]">
+            <Coins className="w-5 h-5 animate-pulse" />
+          </div>
+          <div>
+            <div className="text-[10px] text-[#9a97ab] font-pixel uppercase">Your Treasury</div>
+            <div className="font-pixel text-base text-[#ffd166]">
+              <AnimatedNumber value={character?.gold || 0} />g
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Merchant Altar Showcase Banner with Orbiting Circles */}
+      <div className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-[#1e1e2e]/95 via-[#1a1a2b]/95 to-[#13131f]/95 border-2 border-[#ffd166]/30 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 z-10">
+        <div className="space-y-2 text-center md:text-left max-w-md">
+          <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-[#ffd166]/15 border border-[#ffd166]/40 text-[#ffd166] text-[10px] font-pixel">
+            <Sparkles className="w-3 h-3 text-[#ffd166]" />
+            <span>ENCHANTED WARES OF THE GUILD</span>
+          </div>
+          <MorphingText
+            texts={[
+              "EXCHANGE SACRED GOLD FOR PRESTIGE",
+              "UNLOCK MAJESTIC CRESTS & TITLES",
+              "FORGE YOUR VISUAL GUILD LEGEND",
+              "RARE COSMETICS BESTOWED UPON HEROES",
+            ]}
+            className="text-sm sm:text-base font-pixel text-[#f5f1e8]"
+          />
+          <p className="text-xs text-[#9a97ab] leading-relaxed">
+            Every cosmetic acquired here is permanent to your adventurer account. Equip titles and frames to reflect your guild stature.
+          </p>
+        </div>
+
+        {/* Orbiting Treasure Pedestal */}
+        <div className="relative flex items-center justify-center size-36 shrink-0">
+          <OrbitingCircles radius={52} duration={12} reverse speed={1.2} iconSize={26} path={true}>
+            <Crown className="w-3.5 h-3.5 text-[#ffd166]" />
+          </OrbitingCircles>
+          <OrbitingCircles radius={52} duration={12} delay={6} reverse speed={1.2} iconSize={26} path={false}>
+            <Shield className="w-3.5 h-3.5 text-[#8b5cf6]" />
+          </OrbitingCircles>
+
+          <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#ffd166]/50 shadow-[0_0_20px_rgba(255,209,102,0.3)] flex items-center justify-center z-10">
+            <Gem className="w-7 h-7 text-[#ffd166] animate-pulse" />
+          </div>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none relative z-10">
         {filterTabs.map((t) => {
           const isActive = selectedType === t.key;
           return (
@@ -191,10 +257,10 @@ export default function MerchantPage() {
               key={t.key}
               onClick={() => setSelectedType(t.key)}
               aria-pressed={isActive}
-              className={`px-3.5 py-1.5 rounded text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-[#ffd166] text-[#13131f] font-bold shadow-md"
-                  : "bg-[#1e1e2e] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ffd166]/40"
+                  ? "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] font-bold shadow-md shadow-[#ffd166]/20"
+                  : "bg-[#1e1e2e]/90 backdrop-blur-md border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ffd166]/40"
               }`}
             >
               {t.label}
@@ -206,39 +272,40 @@ export default function MerchantPage() {
       {purchaseError && (
         <div
           role="alert"
-          className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center gap-2 text-xs text-[#f87171]"
+          className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center gap-2 text-xs text-[#f87171] relative z-10"
         >
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{purchaseError}</span>
         </div>
       )}
 
+      {/* Catalog Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div
               key={n}
-              className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-56 animate-pulse"
+              className="notch-card p-5 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-56 animate-pulse"
             />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
           {filteredCatalog.map((item) => {
             const canAfford = (character?.gold || 0) >= item.price_gold;
             const isEquipped = item.isEquipped;
 
             return (
-              <SpotlightCard
+              <MagicCard
                 key={item.id}
-                spotlightColor="rgba(255, 209, 102, 0.18)"
-                className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/60 flex flex-col justify-between gap-4 group transition-all"
+                gradientColor={getSpotlightColor(item.type)}
+                className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/60 flex flex-col justify-between gap-4 group shadow-xl transition-all"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-pixel text-[#9a97ab] uppercase">
+                    <Highlighter action="box" color={item.type === "TITLE" ? "#ffd166" : item.type === "THEME" ? "#ff8c42" : "#8b5cf6"}>
                       {item.type.replace("_", " ")}
-                    </span>
+                    </Highlighter>
                     <div className="flex items-center gap-1 font-pixel text-xs text-[#ffd166]">
                       <Coins className="w-3.5 h-3.5" />
                       <span>{item.price_gold}g</span>
@@ -252,7 +319,7 @@ export default function MerchantPage() {
                     <h3 className="font-pixel text-xs sm:text-sm text-[#f5f1e8] group-hover:text-[#ffd166] transition-colors">
                       {item.name}
                     </h3>
-                    <p className="text-xs text-[#9a97ab] line-clamp-2">
+                    <p className="text-xs text-[#9a97ab] line-clamp-2 leading-relaxed">
                       {item.description}
                     </p>
                   </div>
@@ -297,7 +364,7 @@ export default function MerchantPage() {
                     </button>
                   )}
                 </div>
-              </SpotlightCard>
+              </MagicCard>
             );
           })}
         </div>

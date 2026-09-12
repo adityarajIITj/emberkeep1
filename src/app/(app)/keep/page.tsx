@@ -1,16 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { EmberFlame } from "@/components/animations/EmberFlame";
 import { BorderBeam } from "@/components/effects/BorderBeam";
-import { SpotlightCard } from "@/components/effects/SpotlightCard";
+import { MagicCard } from "@/components/ui/magic-card";
 import { AnimatedNumber } from "@/components/effects/AnimatedNumber";
 import { TodayQuests } from "@/components/keep/TodayQuests";
 import { fireQuestConfetti } from "@/components/effects/Confetti";
 import { sounds } from "@/lib/audio/retro-sound";
 import { xpProgressInLevel, getRankTitle } from "@/lib/server/rpg-engine";
+import { OrbitingCircles } from "@/components/ui/orbiting-circles";
+import { Particles } from "@/components/ui/particles";
+import { MorphingText } from "@/components/ui/morphing-text";
+import { Highlighter } from "@/components/ui/highlighter";
+import { IconCloud } from "@/components/ui/icon-cloud";
 import {
   Flame,
   User,
@@ -20,7 +25,14 @@ import {
   ArrowRight,
   Sparkles,
   Zap,
-  Plus,
+  Sword,
+  BookOpen,
+  Brain,
+  Hammer,
+  Target,
+  Trophy,
+  Crown,
+  Scroll,
 } from "lucide-react";
 
 export default function KeepPage() {
@@ -38,7 +50,7 @@ export default function KeepPage() {
   const rankTitle = character ? getRankTitle(character.level) : "Novice";
   const streak = character?.current_streak || 0;
 
-  // Days to next milestone calculation (§7)
+  // Days to next milestone calculation
   let nextMilestone = 7;
   if (streak >= 14) nextMilestone = 30;
   else if (streak >= 7) nextMilestone = 14;
@@ -52,15 +64,64 @@ export default function KeepPage() {
     fireQuestConfetti(normX, normY);
   };
 
+  // Icons for the 3D Sphere of Mastery
+  const disciplineSphereIcons = [
+    <Sword key="body" className="w-5 h-5 text-[#ef4444]" />,
+    <Brain key="mind" className="w-5 h-5 text-[#3b82f6]" />,
+    <Sparkles key="spirit" className="w-5 h-5 text-[#ec4899]" />,
+    <Hammer key="craft" className="w-5 h-5 text-[#f59e0b]" />,
+    <Target key="focus" className="w-5 h-5 text-[#10b981]" />,
+    <Flame key="ember" className="w-5 h-5 text-[#ff8c42]" />,
+    <Crown key="crown" className="w-5 h-5 text-[#ffd166]" />,
+    <Coins key="gold" className="w-5 h-5 text-[#ffd166]" />,
+    <Shield key="shield" className="w-5 h-5 text-[#8b5cf6]" />,
+    <Trophy key="trophy" className="w-5 h-5 text-[#fbbf24]" />,
+    <Zap key="zap" className="w-5 h-5 text-[#38bdf8]" />,
+    <BookOpen key="lore" className="w-5 h-5 text-[#a855f7]" />,
+  ];
+
   return (
-    <div className="space-y-6 animate-fadeIn">
-      {/* 3-Column Guildhall Layout (§9 Screen 5) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div className="space-y-6 relative animate-fadeIn">
+      {/* Dynamic Ambient Particles */}
+      <Particles className="opacity-35" quantity={35} color="#ff8c42" />
+
+      {/* Guildhall Mantras Header Banner */}
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#1e1e2e]/70 backdrop-blur-xl border border-[#ff8c42]/30 shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42]">
+            <Flame className="w-5 h-5 animate-pulse" />
+          </div>
+          <div>
+            <div className="text-[10px] font-pixel text-[#ffd166] uppercase tracking-wider">
+              Guildhall Sanctuary • Daily Oath
+            </div>
+            <MorphingText
+              texts={[
+                "FEED YOUR SACRED EMBER TODAY",
+                "FORGE INDOMITABLE DISCIPLINE",
+                "DEFEAT PROCRASTINATION",
+                "ASCEND TO GUILD LEGEND",
+              ]}
+              className="text-sm sm:text-base font-pixel text-[#f5f1e8]"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-[#9a97ab]">Current Status:</span>
+          <Highlighter action="box" color={streak > 0 ? "#4ade80" : "#ff8c42"}>
+            {streak > 0 ? `${streak}-DAY HEARTH ROARING` : "KINDLE FIRST FLAME"}
+          </Highlighter>
+        </div>
+      </div>
+
+      {/* 3-Column Guildhall Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start relative z-10">
         {/* Left Column: Character Dossier & Rank Progress (4 cols) */}
         <div className="lg:col-span-4 space-y-5">
-          {/* Character Card with Spotlight Glow */}
-          <SpotlightCard
-            spotlightColor="rgba(255, 140, 66, 0.2)"
+          {/* Character Magic Card with Interactive Spotlight */}
+          <MagicCard
+            gradientColor="rgba(255, 140, 66, 0.22)"
             className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 space-y-4 shadow-xl transition-all"
           >
             <div className="flex items-center justify-between">
@@ -116,16 +177,16 @@ export default function KeepPage() {
 
             <Link
               href="/character"
-              className="w-full py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#9a97ab] hover:text-[#f5f1e8] flex items-center justify-between transition-all mt-2"
+              className="w-full py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#9a97ab] hover:text-[#f5f1e8] flex items-center justify-between transition-all mt-2 group"
             >
               <span>Inspect 5 Disciplines</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-          </SpotlightCard>
+          </MagicCard>
 
-          {/* Quick Treasury Card with Spotlight Glow */}
-          <SpotlightCard
-            spotlightColor="rgba(255, 209, 102, 0.2)"
+          {/* Quick Treasury Magic Card */}
+          <MagicCard
+            gradientColor="rgba(255, 209, 102, 0.2)"
             className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/50 flex items-center justify-between shadow-xl transition-all"
           >
             <div className="flex items-center gap-3">
@@ -146,12 +207,35 @@ export default function KeepPage() {
             >
               <ShoppingBag className="w-4 h-4" />
             </Link>
-          </SpotlightCard>
+          </MagicCard>
+
+          {/* 🌟 3D Sphere of Mastery (IconCloud Interactive Relic) */}
+          <div className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ff8c42]/40 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
+            <div className="w-full flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel">
+                <Sparkles className="w-3.5 h-3.5 text-[#ffd166]" />
+                <span>SPHERE OF MASTERY</span>
+              </div>
+              <span className="text-[10px] text-[#9a97ab] font-mono">DRAG TO ROTATE</span>
+            </div>
+
+            <div className="py-2">
+              <IconCloud
+                radius={85}
+                icons={disciplineSphereIcons}
+                autoRotateSpeed={0.005}
+              />
+            </div>
+
+            <p className="text-[11px] text-[#9a97ab] text-center mt-1">
+              Harness the unified power of the 5 Pillars to fuel your ascent.
+            </p>
+          </div>
         </div>
 
         {/* Center Column: Central Hearth & Today's Quests (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Central Ember Hearth Card with BorderBeam & Click Interaction */}
+          {/* Central Ember Hearth Card with BorderBeam, Orbiting Circles & Click Interaction */}
           <div
             onClick={handleHearthClick}
             className="cursor-pointer relative overflow-hidden notch-card p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-[#1e1e2e] via-[#1a1a2b] to-[#13131f] border-2 border-[#ff8c42]/40 shadow-[0_4px_35px_rgba(255,140,66,0.2)] hover:border-[#ffd166] transition-all group"
@@ -159,7 +243,7 @@ export default function KeepPage() {
             <BorderBeam size={220} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
 
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42] text-[10px] font-pixel">
                   <Flame className="w-3 h-3 text-[#ff8c42] animate-pulse" />
                   <span>THE CENTRAL EMBER • CLICK TO STOKE</span>
@@ -167,23 +251,39 @@ export default function KeepPage() {
                 <h2 className="font-pixel text-base sm:text-lg text-[#f5f1e8] group-hover:text-[#ffd166] transition-colors">
                   KEEP YOUR FIRE ROARING
                 </h2>
-                <p className="text-xs text-[#9a97ab] max-w-xs">
-                  {streak > 0
-                    ? `Streak active for ${streak} days. XP Multiplier: +${Math.min(streak, 30)}%.`
-                    : "No active streak today. Complete a bounty below to kindle your fire!"}
+                <p className="text-xs text-[#9a97ab] max-w-xs leading-relaxed">
+                  {streak > 0 ? (
+                    <>
+                      Streak active for <Highlighter action="underline" color="#ff8c42">{streak} days</Highlighter>. XP Multiplier: <span className="text-[#ffd166] font-bold">+{Math.min(streak, 30)}%</span>.
+                    </>
+                  ) : (
+                    "No active streak today. Complete a bounty below to kindle your fire!"
+                  )}
                 </p>
                 {daysToMilestone > 0 && (
-                  <div className="text-[11px] text-[#ffd166] font-semibold mt-1">
-                    {daysToMilestone} days to {nextMilestone}-day milestone bonus!
+                  <div className="text-[11px] text-[#ffd166] font-semibold mt-1 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#ffd166]" />
+                    <span>{daysToMilestone} days to {nextMilestone}-day milestone bonus!</span>
                   </div>
                 )}
               </div>
 
-              <div className="shrink-0 flex flex-col items-center group-hover:scale-105 transition-transform">
-                <EmberFlame streak={streak} size="lg" showLabel={false} />
-                <span className="font-pixel text-sm text-[#ffd166] mt-2">
-                  {streak} {streak === 1 ? "DAY" : "DAYS"}
-                </span>
+              {/* Central Hearth with Planetary Orbiting Sparks */}
+              <div className="shrink-0 relative flex flex-col items-center justify-center group-hover:scale-105 transition-transform size-32">
+                {/* Orbiting Spark Ring */}
+                <OrbitingCircles radius={48} duration={10} reverse speed={1.5} iconSize={24} path={true}>
+                  <Zap className="w-3 h-3 text-[#ffd166]" />
+                </OrbitingCircles>
+                <OrbitingCircles radius={48} duration={10} delay={5} reverse speed={1.5} iconSize={24} path={false}>
+                  <Sparkles className="w-3 h-3 text-[#ff8c42]" />
+                </OrbitingCircles>
+
+                <div className="relative z-10 flex flex-col items-center">
+                  <EmberFlame streak={streak} size="lg" showLabel={false} />
+                  <span className="font-pixel text-xs text-[#ffd166] mt-1 drop-shadow">
+                    {streak} {streak === 1 ? "DAY" : "DAYS"}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -194,13 +294,15 @@ export default function KeepPage() {
 
         {/* Right Column: 5 Disciplines Mini Radar & Quick Actions (3 cols) */}
         <div className="lg:col-span-3 space-y-5">
-          <SpotlightCard
-            spotlightColor="rgba(255, 140, 66, 0.15)"
+          <MagicCard
+            gradientColor="rgba(255, 140, 66, 0.18)"
             className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ff8c42]/40 space-y-3.5 shadow-xl transition-all"
           >
             <div className="flex items-center justify-between">
               <span className="font-pixel text-xs text-[#f5f1e8]">DISCIPLINES</span>
-              <span className="text-[10px] text-[#ffd166] font-semibold">5 Pillars</span>
+              <Highlighter action="box" color="#ffd166">
+                5 Pillars
+              </Highlighter>
             </div>
 
             <div className="space-y-3">
@@ -234,33 +336,33 @@ export default function KeepPage() {
 
             <Link
               href="/character"
-              className="w-full mt-2 py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#9a97ab] hover:text-[#f5f1e8] flex items-center justify-between transition-all"
+              className="w-full mt-2 py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#9a97ab] hover:text-[#f5f1e8] flex items-center justify-between transition-all group"
             >
               <span>View Radar Pentagon</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-          </SpotlightCard>
+          </MagicCard>
 
           {/* Armory Cosmetic Spotlight */}
-          <SpotlightCard
-            spotlightColor="rgba(255, 209, 102, 0.15)"
+          <MagicCard
+            gradientColor="rgba(255, 209, 102, 0.18)"
             className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/40 space-y-3 shadow-xl transition-all"
           >
             <div className="flex items-center justify-between">
               <span className="font-pixel text-xs text-[#f5f1e8]">THE ARMORY</span>
               <Shield className="w-3.5 h-3.5 text-[#ffd166]" />
             </div>
-            <p className="text-xs text-[#9a97ab]">
-              Equip unlocked cosmetic titles, banner themes, and frames to stand out.
+            <p className="text-xs text-[#9a97ab] leading-relaxed">
+              Equip unlocked cosmetic titles, banner themes, and frames to stand out across the realm.
             </p>
             <Link
               href="/armory"
-              className="w-full py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#ffd166] flex items-center justify-between transition-all font-semibold"
+              className="w-full py-2.5 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs text-[#ffd166] flex items-center justify-between transition-all font-semibold group"
             >
               <span>Open Armory Vault</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
-          </SpotlightCard>
+          </MagicCard>
         </div>
       </div>
     </div>

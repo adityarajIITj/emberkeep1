@@ -2,9 +2,30 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Filter, Scroll, AlertCircle, RefreshCw, Layers } from "lucide-react";
+import {
+  Plus,
+  Filter,
+  Scroll,
+  AlertCircle,
+  RefreshCw,
+  Layers,
+  Flame,
+  Sword,
+  Sparkles,
+  Shield,
+  Trophy,
+  Coins,
+  Zap,
+} from "lucide-react";
 import { QuestCard, QuestItem } from "@/components/quest/QuestCard";
 import { QuestModal, CategoryOption } from "@/components/quest/QuestModal";
+import { OrbitingCircles } from "@/components/ui/orbiting-circles";
+import { Particles } from "@/components/ui/particles";
+import { MorphingText } from "@/components/ui/morphing-text";
+import { Highlighter } from "@/components/ui/highlighter";
+import { BorderBeam } from "@/components/effects/BorderBeam";
+import { fireQuestConfetti } from "@/components/effects/Confetti";
+import { sounds } from "@/lib/audio/retro-sound";
 
 export default function QuestsPage() {
   const queryClient = useQueryClient();
@@ -13,6 +34,7 @@ export default function QuestsPage() {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuest, setEditingQuest] = useState<QuestItem | null>(null);
+  const [isSummoning, setIsSummoning] = useState(false);
 
   const disciplines = [
     { key: "ALL", label: "All Disciplines" },
@@ -75,6 +97,7 @@ export default function QuestsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quests"] });
       setIsModalOpen(false);
+      sounds.playClick();
     },
   });
 
@@ -105,6 +128,7 @@ export default function QuestsPage() {
       queryClient.invalidateQueries({ queryKey: ["quests"] });
       setIsModalOpen(false);
       setEditingQuest(null);
+      sounds.playClick();
     },
   });
 
@@ -119,8 +143,68 @@ export default function QuestsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["quests"] });
+      sounds.playClick();
     },
   });
+
+  // 1-Click Starter Bounties Summon
+  const handleSummonStarters = async () => {
+    if (isSummoning || categories.length === 0) return;
+    setIsSummoning(true);
+
+    const findCat = (key: string) =>
+      categories.find((c) => c.attribute.key === key) || categories[0];
+
+    const starters = [
+      {
+        title: "100 Pushups & Morning Sunlight",
+        description: "Engage your physical vessel and awaken your stamina.",
+        categoryId: findCat("BODY").id,
+        difficulty: "EASY" as const,
+        recurrence: "DAILY" as const,
+      },
+      {
+        title: "Read 15 Pages of Deep Wisdom",
+        description: "Sharpen your intellect and expand your cognitive realm.",
+        categoryId: findCat("MIND").id,
+        difficulty: "EASY" as const,
+        recurrence: "DAILY" as const,
+      },
+      {
+        title: "10-Minute Breath & Stillness",
+        description: "Center your spirit and quiet the chaos of the realm.",
+        categoryId: findCat("SPIRIT").id,
+        difficulty: "EASY" as const,
+        recurrence: "DAILY" as const,
+      },
+      {
+        title: "Ship Code / Build Creative Artifact",
+        description: "Forge tangible progress on your mastercraft project.",
+        categoryId: findCat("CRAFT").id,
+        difficulty: "MEDIUM" as const,
+        recurrence: "DAILY" as const,
+      },
+      {
+        title: "60-Min Distraction-Free Deep Sprint",
+        description: "Conquer a high-priority bounty with single-minded intensity.",
+        categoryId: findCat("FOCUS").id,
+        difficulty: "HARD" as const,
+        recurrence: "DAILY" as const,
+      },
+    ];
+
+    try {
+      for (const q of starters) {
+        await createMutation.mutateAsync(q);
+      }
+      sounds.playLevelUp();
+      fireQuestConfetti(0.5, 0.4);
+    } catch (err) {
+      console.error("Failed to summon starter bounties:", err);
+    } finally {
+      setIsSummoning(false);
+    }
+  };
 
   const handleOpenCreate = () => {
     setEditingQuest(null);
@@ -150,33 +234,67 @@ export default function QuestsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {/* Background Floating Embers */}
+      <Particles className="opacity-35" quantity={40} color="#ff8c42" />
+
       {/* Page Header Strip */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2e2e45]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#2e2e45] relative z-10">
         <div>
           <div className="inline-flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel mb-1">
             <Scroll className="w-3.5 h-3.5 text-[#ffd166]" />
             <span>GUILDHALL ROSTER</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8]">
-            THE QUEST BOARD
+          <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8] flex items-center gap-2">
+            <span>THE QUEST BOARD</span>
           </h1>
-          <p className="text-xs text-[#9a97ab] mt-1">
-            Manage your personal bounties across the five Disciplines
+          <p className="text-xs text-[#9a97ab] mt-1 flex items-center gap-1.5">
+            <span>Master your daily bounties across</span>
+            <Highlighter action="underline" color="#ffd166">
+              Five Sacred Disciplines
+            </Highlighter>
           </p>
         </div>
 
-        <button
-          onClick={handleOpenCreate}
-          className="px-5 py-2.5 rounded bg-gradient-to-r from-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-[0_4px_15px_rgba(255,140,66,0.3)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
-        >
-          <Plus className="w-4 h-4 text-[#13131f]" />
-          <span>Post Quest</span>
-        </button>
+        <div className="hidden lg:flex flex-col p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#ff8c42]/30 backdrop-blur-md">
+          <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
+            DAILY BOUNTY MOTTO
+          </div>
+          <MorphingText
+            texts={[
+              "FORGE CHARACTER THROUGH ACTION",
+              "EARN SACRED XP & REPUTATION",
+              "CONQUER PROCRASTINATION",
+              "ASCEND TO GUILD CHAMPION",
+            ]}
+            className="text-xs font-pixel text-[#f5f1e8]"
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          {quests.length === 0 && (
+            <button
+              onClick={handleSummonStarters}
+              disabled={isSummoning || categories.length === 0}
+              className="px-4 py-2.5 rounded-xl bg-[#1e1e2e] border-2 border-[#ffd166]/50 text-[#ffd166] font-pixel text-xs font-bold hover:bg-[#ffd166]/10 active:scale-95 transition-all flex items-center gap-2 shadow-md cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-4 h-4 text-[#ffd166]" />
+              <span>{isSummoning ? "Summoning..." : "Summon 5 Starters"}</span>
+            </button>
+          )}
+
+          <button
+            onClick={handleOpenCreate}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#ffd166] via-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-[0_4px_20px_rgba(255,140,66,0.35)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto"
+          >
+            <Plus className="w-4 h-4 text-[#13131f]" />
+            <span>Post Quest</span>
+          </button>
+        </div>
       </div>
 
       {/* Discipline Filters Navigation */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none relative z-10">
         {disciplines.map((d) => {
           const isActive = selectedDiscipline === d.key;
           return (
@@ -184,10 +302,10 @@ export default function QuestsPage() {
               key={d.key}
               onClick={() => setSelectedDiscipline(d.key)}
               aria-pressed={isActive}
-              className={`px-3.5 py-1.5 rounded text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-[#ff8c42] text-[#13131f] font-bold shadow-md"
-                  : "bg-[#1e1e2e] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ff8c42]/40"
+                  ? "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] font-bold shadow-md shadow-[#ff8c42]/20"
+                  : "bg-[#1e1e2e]/90 backdrop-blur-md border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ff8c42]/50"
               }`}
             >
               {d.label}
@@ -197,7 +315,7 @@ export default function QuestsPage() {
       </div>
 
       {/* Secondary Difficulty Filter Chips */}
-      <div className="flex items-center gap-2 flex-wrap text-xs text-[#9a97ab]">
+      <div className="flex items-center gap-2 flex-wrap text-xs text-[#9a97ab] relative z-10">
         <span className="flex items-center gap-1 text-[11px] font-semibold text-[#f5f1e8]">
           <Filter className="w-3 h-3 text-[#ffd166]" /> Tier:
         </span>
@@ -205,10 +323,10 @@ export default function QuestsPage() {
           <button
             key={diff}
             onClick={() => setSelectedDifficulty(diff)}
-            className={`px-2.5 py-1 rounded text-[11px] transition-colors cursor-pointer ${
+            className={`px-3 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
               selectedDifficulty === diff
-                ? "bg-[#2e2e45] text-[#ffd166] font-semibold border border-[#ffd166]/40"
-                : "hover:text-[#f5f1e8]"
+                ? "bg-[#ffd166]/15 text-[#ffd166] border border-[#ffd166]/50 shadow-sm"
+                : "bg-[#1e1e2e]/60 border border-transparent hover:text-[#f5f1e8] hover:border-[#2e2e45]"
             }`}
           >
             {diff}
@@ -220,7 +338,7 @@ export default function QuestsPage() {
       {isError && (
         <div
           role="alert"
-          className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center justify-between text-xs text-[#f87171]"
+          className="p-4 rounded-xl bg-[#f87171]/10 border border-[#f87171]/40 flex items-center justify-between text-xs text-[#f87171] relative z-10"
         >
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />
@@ -238,11 +356,11 @@ export default function QuestsPage() {
 
       {/* Loading Skeletons */}
       {isLoading && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative z-10">
           {[1, 2, 3, 4, 5, 6].map((n) => (
             <div
               key={n}
-              className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-40 animate-pulse flex flex-col justify-between"
+              className="notch-card p-5 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-44 animate-pulse flex flex-col justify-between"
             >
               <div className="space-y-2">
                 <div className="w-24 h-3 bg-[#2e2e45] rounded" />
@@ -255,33 +373,83 @@ export default function QuestsPage() {
         </div>
       )}
 
-      {/* Empty State */}
+      {/* 🔮 Orbiting Ascension Altar (When Quests are Bare) */}
       {!isLoading && !isError && quests.length === 0 && (
-        <div className="notch-card p-12 text-center rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-4 max-w-xl mx-auto my-8">
-          <div className="w-16 h-16 rounded-2xl bg-[#13131f] border border-[#2e2e45] flex items-center justify-center mx-auto text-[#ffd166]">
-            <Layers className="w-8 h-8 opacity-60" />
+        <div className="relative overflow-hidden notch-card p-8 sm:p-12 text-center rounded-3xl bg-gradient-to-b from-[#1e1e2e]/90 to-[#13131f]/95 backdrop-blur-2xl border-2 border-[#ff8c42]/40 shadow-2xl space-y-6 max-w-2xl mx-auto my-6 z-10">
+          <BorderBeam size={260} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
+
+          {/* Interactive Orbiting Circles Portal */}
+          <div className="relative flex h-60 w-full items-center justify-center overflow-hidden">
+            {/* Center Hearth Flame */}
+            <div className="w-16 h-16 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_30px_rgba(255,140,66,0.4)] flex items-center justify-center z-10">
+              <Flame className="w-8 h-8 text-[#ff8c42] animate-pulse" />
+            </div>
+
+            {/* Inner Orbit (Radius 70) */}
+            <OrbitingCircles radius={70} duration={12} reverse speed={1.2} iconSize={32}>
+              <Coins className="w-4 h-4 text-[#ffd166]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={70} duration={12} delay={6} reverse speed={1.2} iconSize={32}>
+              <Sparkles className="w-4 h-4 text-[#ffd166]" />
+            </OrbitingCircles>
+
+            {/* Outer Orbit (Radius 120) with the 5 Disciplines */}
+            <OrbitingCircles radius={120} duration={24} delay={0} iconSize={36}>
+              <Sword className="w-4 h-4 text-[#ef4444]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={120} duration={24} delay={4.8} iconSize={36}>
+              <Scroll className="w-4 h-4 text-[#3b82f6]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={120} duration={24} delay={9.6} iconSize={36}>
+              <Sparkles className="w-4 h-4 text-[#ec4899]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={120} duration={24} delay={14.4} iconSize={36}>
+              <Shield className="w-4 h-4 text-[#f59e0b]" />
+            </OrbitingCircles>
+            <OrbitingCircles radius={120} duration={24} delay={19.2} iconSize={36}>
+              <Trophy className="w-4 h-4 text-[#10b981]" />
+            </OrbitingCircles>
           </div>
-          <div className="space-y-1">
-            <h3 className="font-pixel text-sm text-[#f5f1e8]">YOUR BOARD IS BARE</h3>
-            <p className="text-xs text-[#9a97ab]">
-              {selectedDiscipline !== "ALL" || selectedDifficulty !== "ALL"
-                ? "No quests match your active filters. Try loosening your selection or post a new bounty."
-                : "No active quests found. Post your first Quest to start feeding your Ember."}
+
+          <div className="space-y-2">
+            <MorphingText
+              texts={[
+                "YOUR BOARD IS BARE, ADVENTURER",
+                "SUMMON 5 STARTER BOUNTIES",
+                "THE HEARTH CALLS FOR EMBERS",
+                "ASCEND THE FIVE SACRED DISCIPLINES",
+              ]}
+              className="text-base sm:text-lg text-[#ffd166]"
+            />
+            <p className="text-xs text-[#9a97ab] max-w-md mx-auto leading-relaxed">
+              No active quests found on your roster. Populate your board with 5 starter bounties in one click, or post your own custom quest.
             </p>
           </div>
-          <button
-            onClick={handleOpenCreate}
-            className="px-4 py-2 rounded bg-gradient-to-r from-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-md hover:brightness-110 active:scale-95 transition-all inline-flex items-center gap-1.5 cursor-pointer"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Post First Quest</span>
-          </button>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <button
+              onClick={handleSummonStarters}
+              disabled={isSummoning || categories.length === 0}
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#ffd166] via-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-[0_4px_25px_rgba(255,140,66,0.4)] hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-4 h-4 text-[#13131f]" />
+              <span>{isSummoning ? "Summoning Bounties..." : "Summon 5 Starter Bounties"}</span>
+            </button>
+
+            <button
+              onClick={handleOpenCreate}
+              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-[#13131f] border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 text-xs font-pixel text-[#f5f1e8] hover:text-[#ffd166] transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Craft Custom Quest</span>
+            </button>
+          </div>
         </div>
       )}
 
       {/* Quest Grid */}
       {!isLoading && quests.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 relative z-10">
           {quests.map((quest) => (
             <QuestCard
               key={quest.id}

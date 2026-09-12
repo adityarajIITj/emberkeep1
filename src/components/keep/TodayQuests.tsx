@@ -13,10 +13,12 @@ import {
   Calendar,
   Layers,
   ArrowRight,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { QuestItem } from "@/components/quest/QuestCard";
-import { SpotlightCard } from "@/components/effects/SpotlightCard";
+import { MagicCard } from "@/components/ui/magic-card";
+import { Highlighter } from "@/components/ui/highlighter";
 
 export function TodayQuests() {
   const queryClient = useQueryClient();
@@ -71,25 +73,19 @@ export function TodayQuests() {
       return { data, clientX, clientY, questId };
     },
     onSuccess: ({ data, clientX, clientY, questId }) => {
-      // 1. Particle Confetti explosion from click coordinates (§9)
       const normX = Math.min(Math.max(clientX / window.innerWidth, 0.1), 0.9);
       const normY = Math.min(Math.max(clientY / window.innerHeight, 0.1), 0.9);
       fireQuestConfetti(normX, normY);
-
-      // Play retro audio chime!
       sounds.playQuestComplete();
 
-      // 2. Mark completed for optimistic UI badge
       setCompletedQuests((prev) => ({
         ...prev,
         [questId]: { xp: data.rewards.xp, gold: data.rewards.gold },
       }));
 
-      // 3. Invalidate caches for instant HUD updates
       queryClient.invalidateQueries({ queryKey: ["quests"] });
       queryClient.invalidateQueries({ queryKey: ["character"] });
 
-      // 4. Trigger level up modal if leveled up!
       if (data.rewards.didLevelUp) {
         setLevelUpData({
           isOpen: true,
@@ -130,20 +126,20 @@ export function TodayQuests() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-pixel text-sm sm:text-base text-[#f5f1e8] tracking-wide">
-            TODAY'S BOUNTIES
+          <h2 className="font-pixel text-sm sm:text-base text-[#f5f1e8] tracking-wide flex items-center gap-2">
+            <span>TODAY'S BOUNTIES</span>
           </h2>
           <p className="text-xs text-[#9a97ab] mt-0.5">
-            Complete daily objectives to maintain your Ember streak
+            Complete daily objectives to feed your Ember and earn XP
           </p>
         </div>
 
         <Link
           href="/quests"
-          className="inline-flex items-center gap-1 text-xs text-[#ff8c42] hover:text-[#ffd166] transition-colors font-semibold"
+          className="inline-flex items-center gap-1 text-xs text-[#ff8c42] hover:text-[#ffd166] transition-colors font-semibold group"
         >
           <span>All Quests</span>
-          <ArrowRight className="w-3.5 h-3.5" />
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
 
@@ -152,20 +148,20 @@ export function TodayQuests() {
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className="notch-card p-4 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-16 animate-pulse"
+              className="notch-card p-4 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-16 animate-pulse"
             />
           ))}
         </div>
       ) : quests.length === 0 ? (
-        <div className="notch-card p-8 text-center rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-3">
+        <div className="notch-card p-8 text-center rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] space-y-3">
           <Layers className="w-8 h-8 text-[#ffd166] mx-auto opacity-60" />
           <h3 className="font-pixel text-xs text-[#f5f1e8]">ALL BOUNTIES CONQUERED!</h3>
-          <p className="text-xs text-[#9a97ab] max-w-sm mx-auto">
+          <p className="text-xs text-[#9a97ab] max-w-sm mx-auto leading-relaxed">
             Your Ember burns with pride. Post a new bounty from the Quest Board to keep advancing.
           </p>
           <Link
             href="/quests"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-gradient-to-r from-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#ff8c42] to-[#ff5f2e] text-[#13131f] font-pixel text-xs font-bold shadow-md hover:brightness-110 active:scale-95 transition-all"
           >
             Post New Bounty
           </Link>
@@ -178,10 +174,10 @@ export function TodayQuests() {
             const reward = completedQuests[quest.id];
 
             return (
-              <SpotlightCard
+              <MagicCard
                 key={quest.id}
-                spotlightColor={`${quest.category.attribute.color_hex}25`}
-                className={`p-3.5 sm:p-4 rounded-xl bg-[#1e1e2e]/90 backdrop-blur-md border-2 flex items-center justify-between gap-3 relative overflow-hidden transition-all ${
+                gradientColor={`${quest.category.attribute.color_hex}33`}
+                className={`p-3.5 sm:p-4 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-md border-2 flex items-center justify-between gap-3 relative overflow-hidden transition-all shadow-md ${
                   isFinished
                     ? "border-[#4ade80]/50 bg-[#4ade80]/5 opacity-70"
                     : "border-[#2e2e45] hover:border-[#ff8c42]/60"
@@ -189,7 +185,6 @@ export function TodayQuests() {
               >
                 {/* Left: Checkbox & Quest Meta */}
                 <div className="flex items-center gap-3 min-w-0 flex-1">
-                  {/* Interactive Checkbox Button (§9) */}
                   <button
                     onClick={(e) => handleComplete(e, quest)}
                     disabled={isFinished || isThisCompleting}
@@ -203,7 +198,6 @@ export function TodayQuests() {
                     {isFinished && <Check className="w-4 h-4 stroke-[3]" />}
                   </button>
 
-                  {/* Title & Category details */}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span
@@ -225,24 +219,24 @@ export function TodayQuests() {
                   </div>
                 </div>
 
-                {/* Right: Reward Badges or Floating Rewards */}
+                {/* Right: Reward Badges */}
                 <div className="flex items-center gap-2 shrink-0">
                   {isFinished ? (
-                    <div className="px-2 py-1 rounded bg-[#4ade80]/20 border border-[#4ade80]/50 text-[10px] font-pixel text-[#4ade80] animate-bounce">
+                    <div className="px-2 py-1 rounded-lg bg-[#4ade80]/20 border border-[#4ade80]/50 text-[10px] font-pixel text-[#4ade80] animate-bounce">
                       +{reward?.xp} XP / +{reward?.gold}g
                     </div>
                   ) : (
                     <div className="flex items-center gap-1.5 text-[10px] font-pixel">
-                      <span className="px-2 py-0.5 rounded bg-[#13131f] border border-[#2e2e45] text-[#ffd166]">
+                      <Highlighter action="box" color="#ffd166">
                         +{DIFFICULTY_XP[quest.difficulty] || 10} XP
-                      </span>
+                      </Highlighter>
                       <span className="hidden sm:inline-block px-1.5 py-0.5 rounded bg-[#13131f] border border-[#2e2e45] text-[#9a97ab]">
                         {quest.recurrence === "DAILY" ? "DAILY" : "ONE-TIME"}
                       </span>
                     </div>
                   )}
                 </div>
-              </SpotlightCard>
+              </MagicCard>
             );
           })}
         </div>

@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { jsonError } from "./api-response";
 import { User } from "@supabase/supabase-js";
+import { prisma } from "./prisma";
+import { CharacterService } from "./services/character.service";
 
 export interface VerifiedSession {
   user: User;
@@ -38,7 +40,7 @@ export async function verifySession(): Promise<VerifiedSession | null> {
 
 /**
  * Convenience helper for API route handlers that halts with a clean 401 response
- * if no valid session exists.
+ * if no valid session exists, and auto-provisions the DB User if missing.
  */
 export async function requireSession(): Promise<
   | { session: VerifiedSession; errorResponse: null }
@@ -55,5 +57,25 @@ export async function requireSession(): Promise<
       ),
     };
   }
+
+  // Ensure user and character exist in the database (handles fresh db migrations)
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { id: session.userId },
+    });
+
+    if (!existingUser) {
+      await CharacterService.initCharacter(session.userId, session.email, {
+        displayName:
+          session.user.user_metadata?.display_name ||
+          session.user.user_metadata?.name ||
+          session.email.split("@")[0],
+        timezone: "UTC",
+      });
+    }
+  } catch (syncErr) {
+    console.warn("User sync warning:", syncErr);
+  }
+
   return { session, errorResponse: null };
 }

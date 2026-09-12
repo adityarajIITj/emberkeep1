@@ -11,7 +11,13 @@ import {
   ShoppingBag,
   Sparkles,
   TrendingUp,
+  Scroll,
 } from "lucide-react";
+import { MagicCard } from "@/components/ui/magic-card";
+import { Particles } from "@/components/ui/particles";
+import { MorphingText } from "@/components/ui/morphing-text";
+import { Highlighter } from "@/components/ui/highlighter";
+import { OrbitingCircles } from "@/components/ui/orbiting-circles";
 
 interface TimelineEvent {
   id: string;
@@ -84,66 +90,101 @@ export default function ChroniclePage() {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 relative animate-fadeIn">
+      {/* Ambient Blue Lore Particles */}
+      <Particles className="opacity-25" quantity={30} color="#3b82f6" />
+
       {/* Header */}
-      <div className="pb-4 border-b border-[#2e2e45]">
-        <div className="inline-flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel mb-1">
-          <History className="w-3.5 h-3.5 text-[#ffd166]" />
-          <span>GUILD ARCHIVES</span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#2e2e45] relative z-10">
+        <div>
+          <div className="inline-flex items-center gap-1.5 text-xs text-[#ffd166] font-pixel mb-1">
+            <History className="w-3.5 h-3.5 text-[#ffd166]" />
+            <span>GUILD ARCHIVES</span>
+          </div>
+          <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8] flex items-center gap-2">
+            <span>THE CHRONICLE</span>
+          </h1>
+          <p className="text-xs text-[#9a97ab] mt-1 flex items-center gap-1.5 flex-wrap">
+            <span>Immutable audit ledger of your</span>
+            <Highlighter action="underline" color="#3b82f6">
+              conquered quests & acquisitions
+            </Highlighter>
+          </p>
         </div>
-        <h1 className="text-xl sm:text-2xl font-pixel text-[#f5f1e8]">
-          THE CHRONICLE
-        </h1>
-        <p className="text-xs text-[#9a97ab] mt-1">
-          Immutable audit ledger of your conquered quests, shop acquisitions, and streak milestones
-        </p>
+
+        <div className="p-3 rounded-2xl bg-[#1e1e2e]/80 border border-[#3b82f6]/30 backdrop-blur-md">
+          <div className="text-[10px] font-pixel text-[#ffd166] uppercase mb-0.5">
+            CHRONICLE OF AGES
+          </div>
+          <MorphingText
+            texts={[
+              "IMMUTABLE LEDGER OF ACTION",
+              "EVERY BOUNTY ETCHED IN GOLD",
+              "DISCIPLINE RECORDED FOR ETERNITY",
+              "YOUR ADVENTURE UNFOLDS",
+            ]}
+            className="text-xs font-pixel text-[#f5f1e8]"
+          />
+        </div>
       </div>
 
-      {/* Lifetime Stats Bento Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-1">
+      {/* Lifetime Stats Bento Grid with MagicCards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+        <MagicCard
+          gradientColor="rgba(74, 222, 128, 0.2)"
+          className="p-5 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] hover:border-[#4ade80]/50 space-y-1 shadow-lg transition-all"
+        >
           <div className="flex items-center justify-between text-[#9a97ab]">
             <span className="text-[11px] font-semibold">Conquered Quests</span>
             <CheckCircle2 className="w-4 h-4 text-[#4ade80]" />
           </div>
-          <div className="font-pixel text-lg sm:text-xl text-[#f5f1e8]">
+          <div className="font-pixel text-lg sm:text-2xl text-[#f5f1e8]">
             {stats.totalQuestsCompleted}
           </div>
-        </div>
+        </MagicCard>
 
-        <div className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-1">
+        <MagicCard
+          gradientColor="rgba(255, 140, 66, 0.2)"
+          className="p-5 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 space-y-1 shadow-lg transition-all"
+        >
           <div className="flex items-center justify-between text-[#9a97ab]">
             <span className="text-[11px] font-semibold">Total XP Earned</span>
             <TrendingUp className="w-4 h-4 text-[#ff8c42]" />
           </div>
-          <div className="font-pixel text-lg sm:text-xl text-[#ff8c42]">
+          <div className="font-pixel text-lg sm:text-2xl text-[#ff8c42]">
             {stats.totalXpEarned.toLocaleString()}
           </div>
-        </div>
+        </MagicCard>
 
-        <div className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-1">
+        <MagicCard
+          gradientColor="rgba(255, 209, 102, 0.2)"
+          className="p-5 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] hover:border-[#ffd166]/50 space-y-1 shadow-lg transition-all"
+        >
           <div className="flex items-center justify-between text-[#9a97ab]">
             <span className="text-[11px] font-semibold">Lifetime Gold</span>
             <Coins className="w-4 h-4 text-[#ffd166]" />
           </div>
-          <div className="font-pixel text-lg sm:text-xl text-[#ffd166]">
+          <div className="font-pixel text-lg sm:text-2xl text-[#ffd166]">
             {stats.totalGoldEarned.toLocaleString()}g
           </div>
-        </div>
+        </MagicCard>
 
-        <div className="notch-card p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-1">
+        <MagicCard
+          gradientColor="rgba(248, 113, 113, 0.2)"
+          className="p-5 rounded-2xl bg-[#1e1e2e]/90 border-2 border-[#2e2e45] hover:border-[#f87171]/50 space-y-1 shadow-lg transition-all"
+        >
           <div className="flex items-center justify-between text-[#9a97ab]">
             <span className="text-[11px] font-semibold">Longest Streak</span>
             <Flame className="w-4 h-4 text-[#f87171]" />
           </div>
-          <div className="font-pixel text-lg sm:text-xl text-[#f87171]">
+          <div className="font-pixel text-lg sm:text-2xl text-[#f87171]">
             {stats.longestStreak} Days
           </div>
-        </div>
+        </MagicCard>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none relative z-10">
         {[
           { key: "ALL", label: "All Activities" },
           { key: "QUEST", label: "Quest Completions" },
@@ -156,10 +197,10 @@ export default function ChroniclePage() {
               key={tab.key}
               onClick={() => setFilterType(tab.key)}
               aria-pressed={isActive}
-              className={`px-3.5 py-1.5 rounded text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 isActive
-                  ? "bg-[#ffd166] text-[#13131f] font-bold shadow-md"
-                  : "bg-[#1e1e2e] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ffd166]/40"
+                  ? "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] font-bold shadow-md shadow-[#ff8c42]/20"
+                  : "bg-[#1e1e2e]/90 backdrop-blur-md border border-[#2e2e45] text-[#9a97ab] hover:text-[#f5f1e8] hover:border-[#ffd166]/40"
               }`}
             >
               {tab.label}
@@ -170,45 +211,53 @@ export default function ChroniclePage() {
 
       {/* Timeline Stream */}
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-10">
           {[1, 2, 3, 4].map((n) => (
             <div
               key={n}
-              className="notch-card p-4 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-20 animate-pulse"
+              className="notch-card p-4 rounded-2xl bg-[#1e1e2e] border-2 border-[#2e2e45] h-20 animate-pulse"
             />
           ))}
         </div>
       ) : filteredTimeline.length === 0 ? (
-        <div className="notch-card p-12 text-center rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] space-y-3 max-w-md mx-auto my-8">
-          <History className="w-8 h-8 text-[#9a97ab] mx-auto opacity-50" />
-          <h3 className="font-pixel text-xs sm:text-sm text-[#f5f1e8]">
-            NO ENTRIES RECORDED
-          </h3>
-          <p className="text-xs text-[#9a97ab]">
-            Complete quests or acquire cosmetics to begin etching your saga onto the ledger.
-          </p>
+        <div className="relative overflow-hidden notch-card p-12 text-center rounded-3xl bg-gradient-to-b from-[#1e1e2e]/90 to-[#13131f]/95 border-2 border-[#2e2e45] space-y-4 max-w-lg mx-auto my-8 z-10">
+          <OrbitingCircles radius={45} duration={12} iconSize={26}>
+            <Scroll className="w-3.5 h-3.5 text-[#ffd166]" />
+          </OrbitingCircles>
+          <div className="w-14 h-14 rounded-2xl bg-[#13131f] border-2 border-[#3b82f6]/40 flex items-center justify-center mx-auto z-10 relative">
+            <History className="w-7 h-7 text-[#3b82f6]" />
+          </div>
+          <div className="space-y-1">
+            <h3 className="font-pixel text-sm text-[#f5f1e8]">
+              NO ENTRIES RECORDED IN ARCHIVE
+            </h3>
+            <p className="text-xs text-[#9a97ab] leading-relaxed">
+              Complete quests or acquire cosmetics to begin etching your saga onto the guild ledger.
+            </p>
+          </div>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-10">
           {filteredTimeline.map((item) => {
             let icon = <CheckCircle2 className="w-5 h-5 text-[#4ade80]" />;
-            let borderColor = "border-[#2e2e45]";
+            let spotlight = "rgba(74, 222, 128, 0.18)";
 
             if (item.type === "SHOP_PURCHASE") {
               icon = <ShoppingBag className="w-5 h-5 text-[#ffd166]" />;
-              borderColor = "border-[#ffd166]/30";
+              spotlight = "rgba(255, 209, 102, 0.18)";
             } else if (item.type === "STREAK_BONUS" || item.type === "LEVEL_UP_BONUS") {
               icon = <Sparkles className="w-5 h-5 text-[#ff8c42]" />;
-              borderColor = "border-[#ff8c42]/40";
+              spotlight = "rgba(255, 140, 66, 0.22)";
             }
 
             return (
-              <div
+              <MagicCard
                 key={item.id}
-                className={`notch-card p-4 rounded-xl bg-[#1e1e2e] border-2 ${borderColor} flex items-center justify-between gap-4 transition-all hover:border-[#ffd166]/50`}
+                gradientColor={spotlight}
+                className="p-4 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/50 flex items-center justify-between gap-4 transition-all shadow-md"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
-                  <div className="p-2.5 rounded-lg bg-[#13131f] border border-[#2e2e45] shrink-0">
+                  <div className="p-2.5 rounded-xl bg-[#13131f] border border-[#2e2e45] shrink-0 shadow-inner">
                     {icon}
                   </div>
 
@@ -227,14 +276,14 @@ export default function ChroniclePage() {
                 {/* Reward Delta Pill */}
                 <div className="flex items-center gap-2 shrink-0">
                   {item.xpChange !== undefined && (
-                    <span className="px-2 py-0.5 rounded bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42] font-pixel text-[10px]">
+                    <span className="px-2.5 py-1 rounded-lg bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42] font-pixel text-[10px] shadow-sm">
                       +{item.xpChange} XP
                     </span>
                   )}
 
                   {item.goldChange !== undefined && (
                     <span
-                      className={`px-2 py-0.5 rounded font-pixel text-[10px] border ${
+                      className={`px-2.5 py-1 rounded-lg font-pixel text-[10px] border shadow-sm ${
                         item.goldChange < 0
                           ? "bg-[#f87171]/15 border-[#f87171]/40 text-[#f87171]"
                           : "bg-[#ffd166]/15 border-[#ffd166]/40 text-[#ffd166]"
@@ -244,7 +293,7 @@ export default function ChroniclePage() {
                     </span>
                   )}
                 </div>
-              </div>
+              </MagicCard>
             );
           })}
         </div>

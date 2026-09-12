@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Edit2, Trash2, Calendar, Repeat, Award } from "lucide-react";
+import { MagicCard } from "@/components/ui/magic-card";
 
 export interface QuestItem {
   id: string;
@@ -42,7 +43,10 @@ export function QuestCard({ quest, onEdit, onDelete, isDeleting }: QuestCardProp
   const diffInfo = DIFFICULTY_XP[quest.difficulty] || DIFFICULTY_XP.EASY;
 
   return (
-    <div className="notch-card-interactive p-4 sm:p-5 rounded-xl bg-[#1e1e2e] border-2 border-[#2e2e45] flex flex-col justify-between gap-3 group">
+    <MagicCard
+      gradientColor={`${quest.category.attribute.color_hex}35`}
+      className="p-4 sm:p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ff8c42]/50 flex flex-col justify-between gap-3 group shadow-lg transition-all"
+    >
       {/* Top row: Category tag & Difficulty badge */}
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-1.5">
@@ -111,6 +115,6 @@ export function QuestCard({ quest, onEdit, onDelete, isDeleting }: QuestCardProp
           )}
         </div>
       </div>
-    </div>
+    </MagicCard>
   );
 }
