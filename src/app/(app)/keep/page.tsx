@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { EmberFlame } from "@/components/animations/EmberFlame";
 import { BorderBeam } from "@/components/effects/BorderBeam";
+import { SpotlightCard } from "@/components/effects/SpotlightCard";
+import { AnimatedNumber } from "@/components/effects/AnimatedNumber";
 import { TodayQuests } from "@/components/keep/TodayQuests";
 import { xpProgressInLevel, getRankTitle } from "@/lib/server/rpg-engine";
 import {
@@ -91,7 +93,9 @@ export default function KeepPage() {
                 </div>
               </div>
               <div className="flex justify-between text-[10px] text-[#9a97ab]">
-                <span>{xpProgress.xpIntoLevel.toLocaleString()} XP</span>
+                <span>
+                  <AnimatedNumber value={xpProgress.xpIntoLevel} /> XP
+                </span>
                 <span>{xpProgress.progressPercentage}% to LVL {xpProgress.currentLevel + 1}</span>
               </div>
             </div>
@@ -114,7 +118,7 @@ export default function KeepPage() {
               <div>
                 <div className="text-[10px] text-[#9a97ab] font-semibold">TREASURY BALANCE</div>
                 <div className="font-pixel text-base text-[#ffd166]">
-                  {(character?.gold || 0).toLocaleString()}g
+                  <AnimatedNumber value={character?.gold || 0} />g
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fireQuestConfetti } from "@/components/effects/Confetti";
 import { LevelUpModal } from "@/components/effects/LevelUpModal";
+import { sounds } from "@/lib/audio/retro-sound";
 import {
   Check,
   Award,
@@ -73,6 +74,9 @@ export function TodayQuests() {
       const normX = Math.min(Math.max(clientX / window.innerWidth, 0.1), 0.9);
       const normY = Math.min(Math.max(clientY / window.innerHeight, 0.1), 0.9);
       fireQuestConfetti(normX, normY);
+
+      // Play retro audio chime!
+      sounds.playQuestComplete();
 
       // 2. Mark completed for optimistic UI badge
       setCompletedQuests((prev) => ({

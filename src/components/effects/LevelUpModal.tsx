@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { fireLevelUpConfetti } from "./Confetti";
 import { Crown, Sparkles, Coins, ArrowRight, Flame } from "lucide-react";
 import { getRankTitle } from "@/lib/server/rpg-engine";
+import { sounds } from "@/lib/audio/retro-sound";
 
 interface LevelUpModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function LevelUpModal({
   useEffect(() => {
     if (isOpen) {
       fireLevelUpConfetti();
+      sounds.playLevelUp();
     }
   }, [isOpen]);
 

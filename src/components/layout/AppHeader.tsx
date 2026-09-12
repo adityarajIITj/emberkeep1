@@ -7,6 +7,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth-context";
 import { EmberFlame } from "@/components/animations/EmberFlame";
 import { xpProgressInLevel, getRankTitle } from "@/lib/server/rpg-engine";
+import { AnimatedNumber } from "@/components/effects/AnimatedNumber";
+import { sounds } from "@/lib/audio/retro-sound";
 import {
   Flame,
   Coins,
@@ -18,11 +20,27 @@ import {
   LogOut,
   LayoutDashboard,
   Crown,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 
 export function AppHeader() {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
+  const [isMuted, setIsMuted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMuted(sounds.getMuted());
+  }, []);
+
+  const toggleSound = () => {
+    const next = !isMuted;
+    setIsMuted(next);
+    sounds.setMuted(next);
+    if (!next) {
+      sounds.playClick();
+    }
+  };
 
   // Fetch live character state
   const { data: character } = useQuery({
@@ -132,16 +150,25 @@ export function AppHeader() {
             </span>
           </div>
 
-          {/* Gold Vault */}
+          {/* Gold Vault with Animated Rolling Counter */}
           <div
-            className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#13131f] border border-[#ffd166]/30 text-xs shadow-inner"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#13131f] border border-[#ffd166]/30 text-xs shadow-inner"
             title="Gold Coins"
           >
             <Coins className="w-3.5 h-3.5 text-[#ffd166] animate-pulse" />
             <span className="font-pixel text-[11px] text-[#ffd166]">
-              {gold.toLocaleString()}
+              <AnimatedNumber value={gold} />g
             </span>
           </div>
+
+          {/* Sound FX Toggle Button */}
+          <button
+            onClick={toggleSound}
+            title={isMuted ? "Unmute Retro Sound FX" : "Mute Sound FX"}
+            className="p-1.5 rounded bg-[#13131f] border border-[#2e2e45] text-[#ffd166] hover:border-[#ffd166]/50 transition-colors cursor-pointer"
+          >
+            {isMuted ? <VolumeX className="w-4 h-4 opacity-50" /> : <Volume2 className="w-4 h-4 animate-bounce" />}
+          </button>
 
           {/* Player Profile & Equipped Cosmetic Frame */}
           <div
