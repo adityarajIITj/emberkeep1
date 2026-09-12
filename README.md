@@ -7,8 +7,7 @@ EMBERKEEP is a full-stack Life RPG where real tasks are **Quests**, your streak 
 ---
 
 ## Live Demo
-- **App**: [https://emberkeep.vercel.app](https://emberkeep.vercel.app)
-- **Video walkthrough**: [YouTube / Demo Walkthrough](https://github.com/themadjocker/Web_Hackathon)
+- **App**: [https://emberkeep1.vercel.app](https://emberkeep1.vercel.app)
 
 ---
 
