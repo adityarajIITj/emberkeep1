@@ -57,7 +57,7 @@ export function OrbitingCircles({
           } as React.CSSProperties
         }
         className={cn(
-          "absolute flex size-[var(--icon-size)] transform-gpu animate-orbit items-center justify-center rounded-full bg-[#1e1e2e] border border-[#ff8c42]/40 shadow-[0_0_15px_rgba(255,140,66,0.25)] text-[#f5f1e8]",
+          "absolute top-[calc(50%-var(--icon-size)/2)] left-[calc(50%-var(--icon-size)/2)] flex size-[var(--icon-size)] transform-gpu animate-orbit items-center justify-center rounded-full bg-[#1e1e2e] border border-[#ff8c42]/40 shadow-[0_0_15px_rgba(255,140,66,0.25)] text-[#f5f1e8]",
           { "[animation-direction:reverse]": reverse },
           className
         )}

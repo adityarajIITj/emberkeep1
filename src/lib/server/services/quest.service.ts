@@ -40,7 +40,7 @@ export class QuestService {
       };
     }
 
-    return await prisma.quest.findMany({
+    const quests = await prisma.quest.findMany({
       where: whereClause,
       include: {
         category: {
@@ -52,6 +52,86 @@ export class QuestService {
       orderBy: {
         created_at: "desc",
       },
+    });
+
+    // Query user timezone to calculate period keys for completion checking
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { timezone: true },
+    });
+
+    let todayStr = new Date().toISOString().slice(0, 10);
+    try {
+      todayStr = new Intl.DateTimeFormat("en-CA", {
+        timeZone: user?.timezone || "UTC",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
+    } catch {
+      // fallback to UTC
+    }
+
+    // Calculate current week period key e.g. 2026-W37
+    const now = new Date();
+    const tempDate = new Date(now);
+    const dayNum = (tempDate.getUTCDay() + 6) % 7;
+    tempDate.setUTCDate(tempDate.getUTCDate() - dayNum + 3);
+    const firstThursday = tempDate.getTime();
+    tempDate.setUTCMonth(0, 1);
+    if (tempDate.getUTCDay() !== 4) {
+      tempDate.setUTCMonth(0, 1 + ((4 - tempDate.getUTCDay() + 7) % 7));
+    }
+    const weekNum = 1 + Math.ceil((firstThursday - tempDate.getTime()) / 604800000);
+    const weekPeriodKey = `${todayStr.slice(0, 4)}-W${String(weekNum).padStart(2, "0")}`;
+
+    const questIds = quests.map((q) => q.id);
+    const completions = await prisma.questCompletion.findMany({
+      where: {
+        quest_id: { in: questIds },
+        user_id: userId,
+      },
+      select: {
+        quest_id: true,
+        period_key: true,
+        completed_at: true,
+        xp_awarded: true,
+        gold_awarded: true,
+      },
+    });
+
+    return quests.map((quest) => {
+      let isCompleted = false;
+      let completedData: { xp_awarded: number; gold_awarded: number; completed_at: Date } | null = null;
+
+      if (quest.recurrence === "ONE_TIME") {
+        const c = completions.find((comp) => comp.quest_id === quest.id);
+        if (c) {
+          isCompleted = true;
+          completedData = c;
+        }
+      } else if (quest.recurrence === "DAILY") {
+        const c = completions.find((comp) => comp.quest_id === quest.id && comp.period_key === todayStr);
+        if (c) {
+          isCompleted = true;
+          completedData = c;
+        }
+      } else if (quest.recurrence === "WEEKLY") {
+        const c = completions.find((comp) => comp.quest_id === quest.id && comp.period_key === weekPeriodKey);
+        if (c) {
+          isCompleted = true;
+          completedData = c;
+        }
+      }
+
+      return {
+        ...quest,
+        is_completed: isCompleted,
+        completed_today: isCompleted,
+        reward_awarded: completedData
+          ? { xp: completedData.xp_awarded, gold: completedData.gold_awarded }
+          : null,
+      };
     });
   }
 

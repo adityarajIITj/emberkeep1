@@ -40,9 +40,9 @@ export function MorphingText({
     >
       <span
         className={cn(
-          "inline-block transition-all duration-400 ease-out transform",
+          "inline-block transition-all duration-300 ease-out transform",
           isAnimating
-            ? "opacity-0 blur-md translate-y-2 scale-95"
+            ? "opacity-0 blur-[2px] translate-y-1.5 scale-98"
             : "opacity-100 blur-0 translate-y-0 scale-100"
         )}
       >

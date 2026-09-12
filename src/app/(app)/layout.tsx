@@ -68,11 +68,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
-              <DockIcon key={item.label}>
+              <DockIcon key={item.label} label={item.label}>
                 <Link
                   href={item.href}
                   className="flex flex-col items-center justify-center w-full h-full text-[#9a97ab] hover:text-[#ffd166] transition-colors"
-                  title={item.label}
                 >
                   <Icon className="w-5 h-5" />
                 </Link>

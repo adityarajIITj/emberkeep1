@@ -92,7 +92,7 @@ export function AppHeader() {
             </span>
           </Link>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links with Responsive Tooltips */}
           <nav className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -101,14 +101,19 @@ export function AppHeader() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-lg text-xs transition-all relative group ${
                     isActive
                       ? "bg-[#ff8c42]/15 text-[#ff8c42] font-semibold border border-[#ff8c42]/40 shadow-sm"
                       : "text-[#9a97ab] hover:text-[#f5f1e8] hover:bg-[#13131f]"
                   }`}
+                  title={link.label}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{link.label}</span>
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden xl:inline">{link.label}</span>
+                  {/* Floating tooltip for compact viewports */}
+                  <span className="xl:hidden absolute -bottom-7 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 rounded bg-[#13131f] border border-[#ff8c42]/50 text-[10px] font-pixel text-[#ffd166] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg z-50">
+                    {link.label}
+                  </span>
                 </Link>
               );
             })}

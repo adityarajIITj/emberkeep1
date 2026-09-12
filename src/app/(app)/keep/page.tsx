@@ -82,11 +82,19 @@ export default function KeepPage() {
 
   return (
     <div className="space-y-6 relative animate-fadeIn">
+      {/* Rich Atmospheric RPG Sanctuary Background */}
+      <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[550px] overflow-hidden -z-10">
+        {/* Ambient Central Hearth Glow */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 w-[680px] h-[380px] bg-[radial-gradient(ellipse_at_center,rgba(255,140,66,0.15)_0%,rgba(255,209,102,0.06)_45%,transparent_75%)] blur-3xl" />
+        {/* Atmospheric Celestial Rune Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ff8c420c_1px,transparent_1px),linear-gradient(to_bottom,#ff8c420c_1px,transparent_1px)] bg-[size:36px_36px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] opacity-80" />
+      </div>
+
       {/* Dynamic Ambient Particles */}
-      <Particles className="opacity-35" quantity={35} color="#ff8c42" />
+      <Particles className="opacity-40" quantity={40} color="#ff8c42" />
 
       {/* Guildhall Mantras Header Banner */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#1e1e2e]/70 backdrop-blur-xl border border-[#ff8c42]/30 shadow-lg">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#1e1e2e]/75 backdrop-blur-xl border border-[#ff8c42]/35 shadow-lg">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-xl bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42]">
             <Flame className="w-5 h-5 animate-pulse" />
@@ -184,29 +192,32 @@ export default function KeepPage() {
             </Link>
           </MagicCard>
 
-          {/* Quick Treasury Magic Card */}
+          {/* Quick Treasury Magic Card (Horizontal Clean Layout) */}
           <MagicCard
             gradientColor="rgba(255, 209, 102, 0.2)"
-            className="p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/50 flex items-center justify-between shadow-xl transition-all"
+            className="p-4 sm:p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 border-[#2e2e45] hover:border-[#ffd166]/50 shadow-xl transition-all"
           >
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-[#13131f] border border-[#ffd166]/30 text-[#ffd166] shadow-[0_0_15px_rgba(255,209,102,0.2)]">
-                <Coins className="w-5 h-5 animate-pulse" />
-              </div>
-              <div>
-                <div className="text-[10px] text-[#9a97ab] font-semibold uppercase">Treasury Balance</div>
-                <div className="font-pixel text-base text-[#ffd166]">
-                  <AnimatedNumber value={character?.gold || 0} />g
+            <div className="flex items-center justify-between w-full gap-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-[#13131f] border border-[#ffd166]/40 text-[#ffd166] shadow-[0_0_15px_rgba(255,209,102,0.2)] shrink-0">
+                  <Coins className="w-5 h-5 animate-pulse text-[#ffd166]" />
+                </div>
+                <div>
+                  <div className="text-[10px] text-[#9a97ab] font-pixel uppercase tracking-wider">Treasury Vault</div>
+                  <div className="font-pixel text-base sm:text-lg text-[#ffd166] mt-0.5">
+                    <AnimatedNumber value={character?.gold || 0} />g
+                  </div>
                 </div>
               </div>
+              <Link
+                href="/merchant"
+                className="py-2 px-3 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ffd166]/60 text-[#ffd166] flex items-center gap-1.5 transition-all hover:scale-105 active:scale-95 shadow-sm group"
+                title="Visit Merchant Bazaar"
+              >
+                <ShoppingBag className="w-3.5 h-3.5 text-[#ffd166]" />
+                <span className="text-[10px] font-pixel hidden sm:inline">BAZAAR</span>
+              </Link>
             </div>
-            <Link
-              href="/merchant"
-              className="p-2.5 rounded-xl bg-[#13131f] border border-[#2e2e45] hover:border-[#ffd166]/50 text-[#9a97ab] hover:text-[#ffd166] transition-all hover:scale-105 active:scale-95"
-              title="Visit Merchant Bazaar"
-            >
-              <ShoppingBag className="w-4 h-4" />
-            </Link>
           </MagicCard>
 
           {/* 🌟 3D Sphere of Mastery (IconCloud Interactive Relic) */}
@@ -243,7 +254,7 @@ export default function KeepPage() {
             <BorderBeam size={220} duration={8} colorFrom="#ff8c42" colorTo="#ffd166" />
 
             <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-5 text-center sm:text-left">
-              <div className="space-y-2">
+              <div className="space-y-2 flex-1">
                 <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-[#ff8c42]/15 border border-[#ff8c42]/40 text-[#ff8c42] text-[10px] font-pixel">
                   <Flame className="w-3 h-3 text-[#ff8c42] animate-pulse" />
                   <span>THE CENTRAL EMBER • CLICK TO STOKE</span>
@@ -268,19 +279,24 @@ export default function KeepPage() {
                 )}
               </div>
 
-              {/* Central Hearth with Planetary Orbiting Sparks */}
-              <div className="shrink-0 relative flex flex-col items-center justify-center group-hover:scale-105 transition-transform size-32">
-                {/* Orbiting Spark Ring */}
-                <OrbitingCircles radius={48} duration={10} reverse speed={1.5} iconSize={24} path={true}>
-                  <Zap className="w-3 h-3 text-[#ffd166]" />
-                </OrbitingCircles>
-                <OrbitingCircles radius={48} duration={10} delay={5} reverse speed={1.5} iconSize={24} path={false}>
-                  <Sparkles className="w-3 h-3 text-[#ff8c42]" />
-                </OrbitingCircles>
+              {/* Central Hearth with Clean Planetary Orbiting Sparks and Flame */}
+              <div className="shrink-0 relative flex flex-col items-center justify-center p-2">
+                <div className="relative size-28 flex items-center justify-center">
+                  {/* Orbiting Spark Ring */}
+                  <OrbitingCircles radius={44} duration={12} reverse speed={1.2} iconSize={20} path={true}>
+                    <Zap className="w-2.5 h-2.5 text-[#ffd166]" />
+                  </OrbitingCircles>
+                  <OrbitingCircles radius={44} duration={12} delay={6} reverse speed={1.2} iconSize={20} path={false}>
+                    <Sparkles className="w-2.5 h-2.5 text-[#ff8c42]" />
+                  </OrbitingCircles>
 
-                <div className="relative z-10 flex flex-col items-center">
-                  <EmberFlame streak={streak} size="lg" showLabel={false} />
-                  <span className="font-pixel text-xs text-[#ffd166] mt-1 drop-shadow">
+                  <div className="relative z-10 p-2.5 rounded-2xl bg-[#13131f] border-2 border-[#ff8c42]/60 shadow-[0_0_25px_rgba(255,140,66,0.35)] flex items-center justify-center">
+                    <Flame className="w-8 h-8 text-[#ff8c42] animate-pulse filter drop-shadow-[0_0_10px_rgba(255,140,66,0.5)]" />
+                  </div>
+                </div>
+
+                <div className="mt-1.5 text-center">
+                  <span className="font-pixel text-xs text-[#ffd166] tracking-wider drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                     {streak} {streak === 1 ? "DAY" : "DAYS"}
                   </span>
                 </div>

@@ -23,6 +23,9 @@ export interface QuestItem {
       color_hex: string;
     };
   };
+  is_completed?: boolean;
+  completed_today?: boolean;
+  reward_awarded?: { xp: number; gold: number } | null;
 }
 
 interface QuestCardProps {
