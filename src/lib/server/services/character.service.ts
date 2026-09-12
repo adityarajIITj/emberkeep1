@@ -17,16 +17,29 @@ export class CharacterService {
     input: CharacterInitInput
   ) {
     return await prisma.$transaction(async (tx) => {
-      // 1. Guard against re-initialization
+      // 1. Idempotent check: if character exists, update details and return smoothly
       const existingCharacter = await tx.character.findUnique({
         where: { user_id: userId },
+        include: { user: true },
       });
 
       if (existingCharacter) {
-        const error = new Error("Character already initialized for this adventurer");
-        (error as unknown as { code: string; status: number }).code = "CHARACTER_EXISTS";
-        (error as unknown as { code: string; status: number }).status = 409;
-        throw error;
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: {
+            display_name: input.displayName,
+            timezone: input.timezone,
+          },
+        });
+        const characterAttributes = await tx.characterAttribute.findMany({
+          where: { user_id: userId },
+          include: { attribute: true },
+        });
+        return {
+          user: updatedUser,
+          character: existingCharacter,
+          disciplines: characterAttributes,
+        };
       }
 
       // 2. Upsert user record

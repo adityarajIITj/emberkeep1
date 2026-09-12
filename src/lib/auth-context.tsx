@@ -72,10 +72,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const supabase = createClient();
       await supabase.auth.signOut();
+    } catch (err) {
+      console.warn("Sign out error:", err);
+    } finally {
       setUser(null);
       setSession(null);
-    } catch (err) {
-      console.error("Sign out error:", err);
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
     }
   };
 

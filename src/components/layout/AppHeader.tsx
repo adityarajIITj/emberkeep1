@@ -190,7 +190,14 @@ export function AppHeader() {
 
           {/* Sign Out Button */}
           <button
-            onClick={() => signOut()}
+            onClick={async (e) => {
+              e.preventDefault();
+              try {
+                await signOut();
+              } catch {
+                window.location.href = "/login";
+              }
+            }}
             title="Sign Out"
             className="p-1.5 rounded bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f87171] hover:border-[#f87171]/50 transition-colors cursor-pointer"
           >
