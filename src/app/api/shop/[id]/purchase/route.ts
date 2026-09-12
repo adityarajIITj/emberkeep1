@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { requireSession } from "@/lib/server/auth";
 import { jsonSuccess, jsonError } from "@/lib/server/api-response";
 import { ShopService } from "@/lib/server/services/shop.service";
+import { checkRateLimit } from "@/lib/server/rate-limit";
 
 export async function POST(
   _request: NextRequest,
@@ -9,6 +10,19 @@ export async function POST(
 ) {
   const { session, errorResponse } = await requireSession();
   if (errorResponse) return errorResponse;
+
+  // Rate-limiting check: max 10 mutating requests per 10s per user (§12)
+  const rateLimit = checkRateLimit(`${session.userId}:shop-purchase`, {
+    limit: 10,
+    windowMs: 10_000,
+  });
+  if (!rateLimit.success) {
+    return jsonError(
+      "TOO_MANY_REQUESTS",
+      `Rate limit exceeded. Please wait ${Math.ceil(rateLimit.resetMs / 1000)}s before purchasing again.`,
+      429
+    );
+  }
 
   try {
     const { id } = await params;
