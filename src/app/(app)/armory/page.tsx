@@ -12,6 +12,9 @@ import {
   Check,
 } from "lucide-react";
 import Link from "next/link";
+import { BorderBeam } from "@/components/effects/BorderBeam";
+import { SpotlightCard } from "@/components/effects/SpotlightCard";
+import { sounds } from "@/lib/audio/retro-sound";
 
 interface InventoryItemData {
   id: string;
@@ -62,6 +65,7 @@ export default function ArmoryPage() {
       return res.json();
     },
     onSuccess: () => {
+      sounds.playClick();
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
       queryClient.invalidateQueries({ queryKey: ["character"] });
       queryClient.invalidateQueries({ queryKey: ["shop"] });
@@ -118,8 +122,9 @@ export default function ArmoryPage() {
         </p>
       </div>
 
-      {/* Active Equipment Showcase Pane (§9 Screen 9) */}
-      <div className="notch-card p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-[#1e1e2e] via-[#1a1a2b] to-[#13131f] border-2 border-[#ffd166]/30 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* Active Equipment Showcase Pane (§9 Screen 9) with BorderBeam */}
+      <div className="relative overflow-hidden notch-card p-6 sm:p-7 rounded-2xl bg-gradient-to-br from-[#1e1e2e] via-[#1a1a2b] to-[#13131f] border-2 border-[#ffd166]/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <BorderBeam size={220} duration={8} colorFrom="#ffd166" colorTo="#ff8c42" />
         <div className="flex items-center gap-4">
           <div
             className={`w-16 h-16 rounded-2xl bg-[#13131f] border-2 ${frameBorder} flex items-center justify-center font-pixel text-2xl text-[#ffd166] transition-all`}
@@ -212,12 +217,13 @@ export default function ArmoryPage() {
           {filteredInventory.map((item) => {
             const isEquipped = item.equipped;
             return (
-              <div
+              <SpotlightCard
                 key={item.id}
-                className={`notch-card-interactive p-5 rounded-xl bg-[#1e1e2e] border-2 flex flex-col justify-between gap-4 transition-all ${
+                spotlightColor={isEquipped ? "rgba(255, 209, 102, 0.2)" : "rgba(255, 140, 66, 0.15)"}
+                className={`p-5 rounded-2xl bg-[#1e1e2e]/90 backdrop-blur-xl border-2 flex flex-col justify-between gap-4 transition-all ${
                   isEquipped
-                    ? "border-[#ffd166] shadow-[0_0_20px_rgba(255,209,102,0.2)] bg-[#ffd166]/5"
-                    : "border-[#2e2e45]"
+                    ? "border-[#ffd166] shadow-[0_0_25px_rgba(255,209,102,0.25)] bg-[#ffd166]/5"
+                    : "border-[#2e2e45] hover:border-[#ff8c42]/60"
                 }`}
               >
                 <div className="space-y-2">
@@ -246,7 +252,7 @@ export default function ArmoryPage() {
                     equipMutation.mutate({ id: item.id, equip: !isEquipped })
                   }
                   disabled={equipMutation.isPending}
-                  className={`w-full py-2.5 px-3 rounded text-xs font-pixel font-bold transition-all cursor-pointer shadow-md ${
+                  className={`w-full py-2.5 px-3 rounded-xl text-xs font-pixel font-bold transition-all cursor-pointer shadow-md ${
                     isEquipped
                       ? "bg-[#13131f] border border-[#2e2e45] text-[#9a97ab] hover:text-[#f87171] hover:border-[#f87171]/50"
                       : "bg-gradient-to-r from-[#ffd166] to-[#ff8c42] text-[#13131f] hover:brightness-110 active:scale-95"
@@ -254,7 +260,7 @@ export default function ArmoryPage() {
                 >
                   {isEquipped ? "Unequip" : "Equip Item"}
                 </button>
-              </div>
+              </SpotlightCard>
             );
           })}
         </div>

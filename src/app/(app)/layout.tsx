@@ -1,11 +1,21 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { EmberParticles } from "@/components/animations/EmberParticles";
 import { PageTransition } from "@/components/animations/PageTransition";
+import { Dock, DockIcon } from "@/components/ui/dock";
 import { useQuery } from "@tanstack/react-query";
+import {
+  LayoutDashboard,
+  Scroll,
+  User,
+  Shield,
+  ShoppingBag,
+  History,
+} from "lucide-react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { data: character } = useQuery({
@@ -28,20 +38,49 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     themeClass = "theme-abyss";
   }
 
+  const navItems = [
+    { label: "The Keep", href: "/keep", icon: LayoutDashboard },
+    { label: "Quests", href: "/quests", icon: Scroll },
+    { label: "Character", href: "/character", icon: User },
+    { label: "Armory", href: "/armory", icon: Shield },
+    { label: "Merchant", href: "/merchant", icon: ShoppingBag },
+    { label: "Chronicle", href: "/chronicle", icon: History },
+  ];
+
   return (
     <div
-      className={`min-h-screen flex flex-col bg-[#13131f] text-[#f5f1e8] relative selection:bg-[#ff8c42]/30 selection:text-[#ffd166] ${themeClass}`}
+      className={`min-h-screen flex flex-col bg-[#0d0d17] text-[#f5f1e8] relative selection:bg-[#ff8c42]/30 selection:text-[#ffd166] pb-24 ${themeClass}`}
     >
       {/* Ambient Floating Ember Particles */}
-      <EmberParticles count={30} />
+      <EmberParticles count={25} />
 
       {/* Persistent Guildhall Top HUD */}
       <AppHeader />
 
       {/* Main Content Area with Fluid Page Transition */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-12 relative z-10">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 relative z-10">
         <PageTransition>{children}</PageTransition>
       </main>
+
+      {/* Floating Magnifying MacOS Dock (Desktop Viewport) */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 hidden md:block">
+        <Dock className="border-[#ff8c42]/40 bg-[#1e1e2e]/85 backdrop-blur-xl shadow-[0_10px_35px_rgba(0,0,0,0.6)]">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <DockIcon key={item.label}>
+                <Link
+                  href={item.href}
+                  className="flex flex-col items-center justify-center w-full h-full text-[#9a97ab] hover:text-[#ffd166] transition-colors"
+                  title={item.label}
+                >
+                  <Icon className="w-5 h-5" />
+                </Link>
+              </DockIcon>
+            );
+          })}
+        </Dock>
+      </div>
 
       {/* Mobile Sticky Bottom Navigation */}
       <MobileNav />

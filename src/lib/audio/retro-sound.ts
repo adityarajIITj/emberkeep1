@@ -151,6 +151,31 @@ class SoundEngine {
       });
     });
   }
+
+  /**
+   * Flame Ignite / Stoke Hearth: warm crackling ember swoosh
+   */
+  public playFlameIgnite() {
+    if (this.getMuted()) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(220, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(587.33, ctx.currentTime + 0.15); // D5
+
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.35);
+  }
 }
 
 export const sounds = new SoundEngine();

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { QuestItem } from "@/components/quest/QuestCard";
+import { SpotlightCard } from "@/components/effects/SpotlightCard";
 
 export function TodayQuests() {
   const queryClient = useQueryClient();
@@ -177,9 +178,10 @@ export function TodayQuests() {
             const reward = completedQuests[quest.id];
 
             return (
-              <div
+              <SpotlightCard
                 key={quest.id}
-                className={`notch-card-interactive p-3.5 sm:p-4 rounded-xl bg-[#1e1e2e] border-2 flex items-center justify-between gap-3 relative overflow-hidden transition-all ${
+                spotlightColor={`${quest.category.attribute.color_hex}25`}
+                className={`p-3.5 sm:p-4 rounded-xl bg-[#1e1e2e]/90 backdrop-blur-md border-2 flex items-center justify-between gap-3 relative overflow-hidden transition-all ${
                   isFinished
                     ? "border-[#4ade80]/50 bg-[#4ade80]/5 opacity-70"
                     : "border-[#2e2e45] hover:border-[#ff8c42]/60"
@@ -205,8 +207,8 @@ export function TodayQuests() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: quest.category.attribute.color_hex }}
+                        className="w-2 h-2 rounded-full shrink-0 shadow-[0_0_8px_currentColor]"
+                        style={{ backgroundColor: quest.category.attribute.color_hex, color: quest.category.attribute.color_hex }}
                       />
                       <span className="text-[10px] font-semibold text-[#9a97ab] uppercase truncate">
                         {quest.category.attribute.label} • {quest.category.label}
@@ -240,7 +242,7 @@ export function TodayQuests() {
                     </div>
                   )}
                 </div>
-              </div>
+              </SpotlightCard>
             );
           })}
         </div>
