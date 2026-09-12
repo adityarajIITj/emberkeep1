@@ -1,0 +1,216 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Mirrors Supabase auth.users (1:1 by shared UUID)
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  display_name        String
+  avatar_url          String?
+  timezone            String               @default("UTC")
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+
+  character           Character?
+  character_attributes CharacterAttribute[]
+  quest_categories    QuestCategory[]
+  quests              Quest[]
+  quest_completions   QuestCompletion[]
+  xp_ledgers          XPLedger[]
+  gold_ledgers        GoldLedger[]
+  streak_logs         StreakLog[]
+  inventory_items     InventoryItem[]
+
+  @@map("users")
+}
+
+// 1:1 with User — denormalized aggregate state
+model Character {
+  user_id             String               @id
+  level               Int                  @default(1)
+  total_xp            Int                  @default(0)
+  gold                Int                  @default(0)
+  current_streak      Int                  @default(0)
+  longest_streak      Int                  @default(0)
+  last_activity_date  DateTime?
+  equipped_theme_id   String?
+  equipped_title_id   String?
+  equipped_frame_id   String?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("characters")
+}
+
+// Seeded lookup table — the 5 Disciplines
+model Attribute {
+  id                  String               @id @default(uuid())
+  key                 String               @unique // BODY, MIND, SPIRIT, CRAFT, FOCUS
+  label               String
+  color_hex           String
+  icon_key            String
+
+  character_attributes CharacterAttribute[]
+  quest_categories    QuestCategory[]
+  quest_completions   QuestCompletion[]
+  xp_ledgers          XPLedger[]
+
+  @@map("attributes")
+}
+
+// Per-user, per-Discipline progression
+model CharacterAttribute {
+  id                  String               @id @default(uuid())
+  user_id             String
+  attribute_id        String
+  xp                  Int                  @default(0)
+  level               Int                  @default(1)
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  attribute           Attribute            @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, attribute_id])
+  @@map("character_attributes")
+}
+
+// Quest Categories (system seeded defaults + custom user categories)
+model QuestCategory {
+  id                  String               @id @default(uuid())
+  user_id             String?              // null = system default
+  label               String
+  attribute_id        String
+  color_hex           String
+  icon_key            String
+
+  user                User?                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  attribute           Attribute            @relation(fields: [attribute_id], references: [id])
+  quests              Quest[]
+
+  @@map("quest_categories")
+}
+
+// Real-world tasks as RPG Quests
+model Quest {
+  id                  String               @id @default(uuid())
+  user_id             String
+  category_id         String
+  title               String
+  description         String?
+  difficulty          String               // EASY, MEDIUM, HARD, EPIC
+  recurrence          String               @default("ONE_TIME") // ONE_TIME, DAILY, WEEKLY
+  status              String               @default("ACTIVE")   // ACTIVE, ARCHIVED
+  due_date            DateTime?
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+  deleted_at          DateTime?            // Soft delete
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  category            QuestCategory        @relation(fields: [category_id], references: [id])
+  completions         QuestCompletion[]
+
+  @@index([user_id])
+  @@map("quests")
+}
+
+// Append-only completion record
+model QuestCompletion {
+  id                  String               @id @default(uuid())
+  quest_id            String
+  user_id             String
+  period_key          String               // 'ONE_TIME' or ISO date string (YYYY-MM-DD)
+  xp_awarded          Int
+  gold_awarded        Int
+  attribute_id        String
+  idempotency_key     String               @unique
+  completed_at        DateTime             @default(now())
+
+  quest               Quest                @relation(fields: [quest_id], references: [id])
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  attribute           Attribute            @relation(fields: [attribute_id], references: [id])
+
+  @@unique([quest_id, period_key])
+  @@index([user_id])
+  @@map("quest_completions")
+}
+
+// Append-only XP ledger audit trail
+model XPLedger {
+  id                  String               @id @default(uuid())
+  user_id             String
+  amount              Int
+  source              String               // QUEST_COMPLETION, STREAK_BONUS, LEVEL_UP_BONUS
+  reference_id        String?
+  attribute_id        String?
+  created_at          DateTime             @default(now())
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  attribute           Attribute?           @relation(fields: [attribute_id], references: [id])
+
+  @@index([user_id])
+  @@map("xp_ledgers")
+}
+
+// Append-only Gold ledger audit trail
+model GoldLedger {
+  id                  String               @id @default(uuid())
+  user_id             String
+  amount              Int                  // negative for spend
+  source              String               // QUEST_COMPLETION, STREAK_BONUS, SHOP_PURCHASE, REFUND
+  reference_id        String?
+  created_at          DateTime             @default(now())
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("gold_ledgers")
+}
+
+// Track active calendar days for streaks and Chronicle heatmap
+model StreakLog {
+  id                  String               @id @default(uuid())
+  user_id             String
+  activity_date       String               // ISO Date string YYYY-MM-DD computed with user timezone
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, activity_date])
+  @@map("streak_logs")
+}
+
+// Catalog of cosmetic shop items
+model ShopItem {
+  id                  String               @id @default(uuid())
+  key                 String               @unique
+  name                String
+  description         String?
+  type                String               // THEME, BADGE, TITLE, AVATAR_FRAME
+  price_gold          Int
+  is_active           Boolean              @default(true)
+
+  inventory_items     InventoryItem[]
+
+  @@map("shop_items")
+}
+
+// User ownership of cosmetic items
+model InventoryItem {
+  id                  String               @id @default(uuid())
+  user_id             String
+  shop_item_id        String
+  acquired_at         DateTime             @default(now())
+  equipped            Boolean              @default(false)
+
+  user                User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  shop_item           ShopItem             @relation(fields: [shop_item_id], references: [id])
+
+  @@unique([user_id, shop_item_id])
+  @@map("inventory_items")
+}
