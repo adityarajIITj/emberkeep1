@@ -61,7 +61,28 @@ body {
 .notch-card-interactive:hover {
   border-color: var(--ember-start);
   transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 140, 66, 0.15);
+  box-shadow: 0 6px 24px rgba(255, 140, 66, 0.2);
+}
+
+/* 21st.dev style Border Beam animation */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam var(--duration, 10s) infinite linear;
+}
+
+/* Shimmer animation for rewards & buttons */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s infinite;
 }
 
 /* Scanline subtle texture */

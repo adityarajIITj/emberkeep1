@@ -4,6 +4,7 @@ import React from "react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { EmberParticles } from "@/components/animations/EmberParticles";
+import { PageTransition } from "@/components/animations/PageTransition";
 import { useQuery } from "@tanstack/react-query";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -37,9 +38,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Persistent Guildhall Top HUD */}
       <AppHeader />
 
-      {/* Main Content Area */}
+      {/* Main Content Area with Fluid Page Transition */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 pb-24 lg:pb-12 relative z-10">
-        {children}
+        <PageTransition>{children}</PageTransition>
       </main>
 
       {/* Mobile Sticky Bottom Navigation */}
